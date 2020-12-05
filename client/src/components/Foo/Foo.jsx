@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 
 // Import socket.io client
-import io from "socket.io-client";
+import io from 'socket.io-client';
 
 // ENDPOINT of socket.io server
 const ENDPOINT = 'http://localhost:5000'
