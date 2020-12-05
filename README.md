@@ -1,4 +1,4 @@
 # KnowingBrosGame
 
-Hyunwoo Kim
-Kelley Nguyen
+Use `yarn start`
+for both client and server
