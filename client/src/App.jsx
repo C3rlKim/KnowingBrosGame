@@ -1,14 +1,15 @@
 import React from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 
-import Landing from "./Landing"
-import Create from "./Create"
-import Join from "./Join"
-import Wait from "./WaitingRoom"
-import ChooseSong from "./ChooseSong"
-import Guess from "./Guess"
-import Results from "./Results"
-console.log(Landing);
+import Landing from "./components/Landing"
+import Create from "./components/Create"
+import Join from "./components/Join"
+import Wait from "./components/WaitingRoom"
+import ChooseSong from "./components/ChooseSong"
+import Guess from "./components/Guess"
+import Results from "./components/Results"
+import Foo from './components/Foo/Foo';
+
 const App = () => (
 	<Router>
 		<Route path="/" exact component={Landing} />
@@ -18,6 +19,7 @@ const App = () => (
     <Route path="/choose" component={ChooseSong} />
     <Route path="/guess" component={Guess} />
     <Route path="/results" component={Results} />
+    <Route path="/foo" component={Foo} />
   </Router>
 );
 
