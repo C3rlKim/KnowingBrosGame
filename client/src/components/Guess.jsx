@@ -28,7 +28,7 @@ const Guess = (trackNumber) => {
   //on mount seek to start
   useEffect(() => {
   	playerRef.current.player.seekTo(start);
-  }, [])
+  }, [playerRef])
 
   //use effect hook to execute sequentially so 'playing' is updated last
   //and not overidden by async updates
@@ -76,7 +76,6 @@ const Guess = (trackNumber) => {
 		<div>
 			<h1>guess the song</h1>
 			<p>you can play each snippet up to 3 times. you will get more points if you rely on shorter snippets</p>
-			<p>0:58 min remaining</p>
 
 			<Form>
 				<Form.Group>
