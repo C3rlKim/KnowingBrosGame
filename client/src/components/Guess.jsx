@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react'
-import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
+import React, { useEffect } from 'react';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 
-const Guess = () => {	
+const Guess = () => {
   // useEffect(() => {
   // 	const timer = setTimeout(() => {
   // 		console.log(document.querySelectorAll('.ao.ap.ds.b3.bs.bu.bt.dt'));

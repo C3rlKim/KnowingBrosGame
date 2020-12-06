@@ -1,8 +1,8 @@
-import React from 'react'
-import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
+import React from 'react';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 
-const hardCodedSongList = ["Jamie - Apollo 11", "B1A4 - Like a Movie", "IU - Blueming"]
+const hardCodedSongList = ["Jamie - Apollo 11", "B1A4 - Like a Movie", "IU - Blueming"];
 
 const options = hardCodedSongList.map((song) => {
 	return (

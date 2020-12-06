@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import io from 'socket.io-client';
 
 // ENDPOINT of socket.io server
-const ENDPOINT = 'http://localhost:5000'
+const ENDPOINT = "http://localhost:5000"
 
 const  Foo = () => {
   // Empty array as 2nd argument:

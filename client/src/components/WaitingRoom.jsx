@@ -1,7 +1,7 @@
 import React from 'react'
 import Button from 'react-bootstrap/Button'
 
-const hardcodedList = ["Kelley", "Karl"]
+const hardcodedList = ["Kelley", "Karl"];
 
 const players = hardcodedList.map((name) => {
 	return (
