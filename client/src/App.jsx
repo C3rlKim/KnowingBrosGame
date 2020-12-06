@@ -21,7 +21,7 @@ const App = () => (
     <Route path="/join">
 			<Join/>
 		</Route>
-    <Route path="/wait">
+    <Route path="/waitroom">
 			<WaitingRoom/>
 		</Route>
     <Route path="/choose">
