@@ -8,7 +8,7 @@ import WaitingRoom from './components/WaitingRoom';
 import ChooseSong from './components/ChooseSong';
 import Guess from './components/Guess';
 import Results from './components/Results';
-import Foo from './components/Foo';
+import Chat from './components/Chat';
 
 const App = () => (
 	<Router>
@@ -33,8 +33,9 @@ const App = () => (
     <Route path="/results">
 			<Results/>
 		</Route>
-    <Route path="/foo">
-			<Foo/>
+		// temporarily before adding component with other ones
+    <Route path="/chat">
+			<Chat/>
 		</Route>
 	</Router>
 );
