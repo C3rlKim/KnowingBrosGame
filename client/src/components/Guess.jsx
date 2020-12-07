@@ -5,7 +5,8 @@ import ReactPlayer from 'react-player'
 
 const start = 10;
 
-const Guess = (trackNumber) => {	
+const Guess = (props) => {
+	const {handler, trackNumber} = props;
   // useEffect(() => {
   // 	const timer = setTimeout(() => {
   // 		console.log(document.querySelectorAll('.ao.ap.ds.b3.bs.bu.bt.dt'));
@@ -64,9 +65,9 @@ const Guess = (trackNumber) => {
   	setWhichPlaying(10);
   }
 
-  const handleProgress = (duration) => {
-  	console.log("pro", duration);
-  	if ((duration.playedSeconds - start) >= whichPlaying) {
+  const handleProgress = (progress) => {
+  	console.log("pro", progress);
+  	if ((progress.playedSeconds - start) >= whichPlaying) {
   		console.log("hit");
   		setWhichPlaying(0);
   	}

@@ -1,24 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
 const Join = () => {
+	const [room, setRoom] = useState("Tommy Trojan");
+	const [name, setName] = useState("Nefarious Nayeon");
+
+	const handleChangeRoom = (e) => {
+		setRoom(e.target.value);
+	}
+
+	const handleChangeName = (e) => {
+		setName(e.target.value);
+	}
+
+	const handleSubmit = (e) => {
+		e.preventDefault();
+		//send room and name to server, establish connection
+	}
+
 	return (
 		<div>
 			<h1>join room</h1>
 			<Form>
 				<Form.Group>
 					<Form.Label>ROOM NAME</Form.Label>
-					<Form.Control placeholder="Tommy Trojan"></Form.Control>
+					<Form.Control value={room} onChange={handleChangeRoom}></Form.Control>
 				</Form.Group>
 
 				<Form.Group>
 					<Form.Label>YOUR NAME</Form.Label>
-					<Form.Control placeholder="Nefarious Nayeon"></Form.Control>
+					<Form.Control value={name} onChange={handleChangeName}></Form.Control>
 				</Form.Group>
 			</Form>
-			<Button type="submit">submit</Button>
+			<Button type="submit" onSubmit={handleSubmit}>submit</Button>
 
 			<Link to="/create">
 				actually, I want to create a room

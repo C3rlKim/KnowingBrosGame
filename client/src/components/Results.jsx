@@ -12,15 +12,17 @@ const hardcodedResponses = [{
 
 const playerAnswers = hardcodedResponses.map((response) => {
 	return (
-		<div>
+		<div key={response.name}>
 			<p>{response.name}</p>
 			<p>{response.song}</p>
 			<p>{response.time}</p>
 		</div>
 	);
-})
+});
 
-const Results = () => {
+const Results = (props) => {
+	const {handler} = props;
+	
 	return (
 		<div>
 			<h1>{answer}</h1>
