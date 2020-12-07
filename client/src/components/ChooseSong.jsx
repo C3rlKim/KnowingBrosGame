@@ -3,7 +3,7 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import ReactPlayer from 'react-player'
 
-const hardCodedSongList = ["Jamie - Apollo 11", "B1A4 - Like a Movie", "IU - Blueming"]
+const hardCodedSongList = ["Jamie - Apollo 11", "B1A4 - Like a Movie", "IU - Blueming"];
 
 const options = hardCodedSongList.map((song) => {
 	return (

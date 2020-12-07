@@ -1,14 +1,14 @@
-import React from 'react'
-import Table from 'react-bootstrap/Table'
-import Button from 'react-bootstrap/Button'
+import React from 'react';
+import Table from 'react-bootstrap/Table';
+import Button from 'react-bootstrap/Button';
 
-const answer = "Song: Twice - What is Love?"
+const answer = "Song: Twice - What is Love?";
 
 const hardcodedResponses = [{
 	name:"Nefarious Nayeon", song:"Blackpink - Kill This Love", time:"1 sec"},
 	{name:"Picky Piglet", song:"Twice - Fancy", time:"10 sec"},
 	{name:"Eerie Eeyore", song:"Twice - What is Love?", time:"5 sec"
-}]
+}];
 
 const playerAnswers = hardcodedResponses.map((response) => {
 	return (

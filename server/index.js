@@ -12,13 +12,13 @@ const io = require('socket.io')(server, {
 
 const PORT = process.env.PORT || 5000;
 
-app.get('/',(req,res) => {
-  res.send("Karl and Kelley's server")
-});
-
 // Start of connection
-io.on('connect', (socket) => {
+io.on("connect", socket => {
+  socket.emit('id', socket.id);
 
+  socket.on("sendMessage",({ message, id }) => {
+    io.emit("message", { message, id });
+  });
 });
 
 server.listen(PORT,() => console.log(`server listening on port: ${PORT}`));

@@ -1,6 +1,7 @@
-import React from 'react'
-import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
+import React from 'react';
+import { Link } from 'react-router-dom';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 
 const Join = () => {
 	return (
@@ -18,7 +19,10 @@ const Join = () => {
 				</Form.Group>
 			</Form>
 			<Button type="submit">submit</Button>
-			<a href="/create">actually, I want to create a room</a>
+
+			<Link to="/create">
+				actually, I want to create a room
+			</Link>
 		</div>
 	);
 }
