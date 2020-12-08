@@ -5,9 +5,7 @@ import Landing from './components/Landing';
 import Create from './components/Create';
 import Join from './components/Join';
 import WaitingRoom from './components/WaitingRoom';
-import ChooseSong from './components/ChooseSong';
-import Guess from './components/Guess';
-import Results from './components/Results';
+import Room from './components/Room';
 import Chat from './components/Chat';
 
 const App = () => (
@@ -15,26 +13,19 @@ const App = () => (
 		<Route path="/" exact>
 			<Landing/>
 		</Route>
-    <Route path="/create">
-			<Create/>
-		</Route>
-    <Route path="/join">
+        <Route path="/create">
+    		<Create/>
+    	</Route>
+        <Route path="/join">
 			<Join/>
 		</Route>
-    <Route path="/waitroom">
+        <Route path="/waitroom">
 			<WaitingRoom/>
 		</Route>
-    <Route path="/choose">
-			<ChooseSong/>
+        <Route path="/room">
+			<Room/>
 		</Route>
-    <Route path="/guess">
-			<Guess/>
-		</Route>
-    <Route path="/results">
-			<Results/>
-		</Route>
-		// temporarily before adding component with other ones
-    <Route path="/chat">
+        <Route path="/chat">
 			<Chat/>
 		</Route>
 	</Router>
