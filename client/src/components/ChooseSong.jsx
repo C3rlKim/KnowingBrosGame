@@ -4,11 +4,11 @@ import ReactPlayer from 'react-player';
 import MainButton from './MainButton';
 
 const Choose = (props) => {
-	const {handler} = props;
-	const [titles, setTitles] = useState(null);
-	const [value, setValue] = useState("choose a song");
+  const {handler} = props;
+  const [titles, setTitles] = useState(null);
+  const [value, setValue] = useState("choose a song");
 
-	useEffect(() => {
+  useEffect(() => {
     async function getPlaylist() {
       try {
         const response = await fetch(
@@ -21,9 +21,9 @@ const Choose = (props) => {
 
         let id = 0;
         setTitles(json.tracks.map((track) => {
-					return (
-						<option key={id++}>{track.title}</option>
-					);
+          return (
+            <option key={id++}>{track.title}</option>
+          );
         }));
       } catch (error) {
         console.log("error: ", error);
@@ -34,41 +34,41 @@ const Choose = (props) => {
   }, []);
 
   const handleChange = (e) => {
-  	setValue(e.target.value);
+    setValue(e.target.value);
   }
 
   const handleSubmit = (e) => {
-  	e.preventDefault();
-  	//send value to guessers
-  	handler("wait");
+    e.preventDefault();
+    //send value to guessers
+    handler("wait");
   }
 
-	return (
-		<div>
-			<h1>you are the judge for this round!</h1>
-			<h1>choose a song</h1>
+  return (
+    <div>
+      <h1>you are the judge for this round!</h1>
+      <h1>choose a song</h1>
 
-			<Form onSubmit={handleSubmit}>
-				<MainButton type="submit">submit</MainButton>
-				<MainButton>leave game</MainButton>
+      <Form onSubmit={handleSubmit}>
+        <MainButton type="submit">submit</MainButton>
+        <MainButton>leave game</MainButton>
 
-				<Form.Label className="formLabel">
+        <Form.Label className="formLabel">
           SONG SELECTION
         </Form.Label>
-				<Form.Control as="select" value={value} onChange={handleChange}>
-					{titles}
-				</Form.Control>
-				
+        <Form.Control as="select" value={value} onChange={handleChange}>
+          {titles}
+        </Form.Control>
+        
         <Form.Label className="formLabel">
           SONG PLAYER
         </Form.Label>
-				<ReactPlayer
-	        url="https://soundcloud.com/kaetly-rojas/sets/kpop"
-	        width='100%'
-      	/>
-			</Form>
-		</div>
-	);
+        <ReactPlayer
+          url="https://soundcloud.com/kaetly-rojas/sets/kpop"
+          width='100%'
+        />
+      </Form>
+    </div>
+  );
 }
 
 export default Choose;

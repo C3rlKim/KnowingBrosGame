@@ -9,26 +9,26 @@ import Room from './components/Room';
 import Chat from './components/Chat';
 
 const App = () => (
-	<Router>
-		<Route path="/" exact>
-			<Landing/>
-		</Route>
+  <Router>
+    <Route path="/" exact>
+      <Landing/>
+    </Route>
         <Route path="/create">
-    		<Create/>
-    	</Route>
+        <Create/>
+      </Route>
         <Route path="/join">
-			<Join/>
-		</Route>
+      <Join/>
+    </Route>
         <Route path="/waitroom">
-			<WaitingRoom/>
-		</Route>
+      <WaitingRoom/>
+    </Route>
         <Route path="/room">
-			<Room/>
-		</Route>
+      <Room/>
+    </Route>
         <Route path="/chat">
-			<Chat/>
-		</Route>
-	</Router>
+      <Chat/>
+    </Route>
+  </Router>
 );
 
 export default App;
