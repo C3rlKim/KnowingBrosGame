@@ -47,13 +47,16 @@ const Choose = (props) => {
 		<div>
 			<h1>you are the judge for this round!</h1>
 			<h1>choose a song</h1>
+
 			<Form onSubmit={handleSubmit}>
+				<Button type="submit">submit</Button>
+				<Button>leave game</Button>
+
 				<Form.Label>SONG SELECTION</Form.Label>
 				<Form.Control as="select" value={value} onChange={handleChange}>
 					{titles}
 				</Form.Control>
-				<Button type="submit">submit</Button>
-				<Button type="submit">leave game</Button>
+				
 				<ReactPlayer
 	        url="https://soundcloud.com/kaetly-rojas/sets/kpop"
 	        width='100%'
