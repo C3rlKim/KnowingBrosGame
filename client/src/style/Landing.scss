@@ -1,15 +1,15 @@
 @import 'colors';
 
 .landing {
-	background: url("../images/background.svg");
-	background-size: 100% 100%;
+  background: url("../images/background.svg");
+  background-size: 100% 100%;
   background-repeat: no-repeat;
   height: 100vh;
 
   .roomBtn {
-  	border: none;
-		box-shadow: 0px 5px 5px 5px rgba(0, 0, 0, 0.25);
-	  width: 120px;
+    border: none;
+    box-shadow: 0px 5px 5px 5px rgba(0, 0, 0, 0.25);
+    width: 120px;
     height: 120px;
     border-radius: 50%;
     color: $reddark;
@@ -17,34 +17,34 @@
     font-size: 1.6rem;
 
     &:hover {
-	    color: $yellow;
-	  }
+      color: $yellow;
+    }
   }
 
   #createRoomBtn {
-  	background: linear-gradient(106.45deg, $yellow 8.47%, $yellowmed 92.4%);
+    background: linear-gradient(106.45deg, $yellow 8.47%, $yellowmed 92.4%);
 
-  	&:hover {
-	    background: linear-gradient(106.45deg, $red, $reddark);
-	  }
+    &:hover {
+      background: linear-gradient(106.45deg, $red, $reddark);
+    }
   }
 
   #joinRoomBtn {
-  	background: linear-gradient(106.45deg, $yellowmed 8.47%, $yellowdark 92.4%);
+    background: linear-gradient(106.45deg, $yellowmed 8.47%, $yellowdark 92.4%);
 
-  	&:hover {
-	    background: linear-gradient(106.45deg, $red, $reddark);
-	  }
+    &:hover {
+      background: linear-gradient(106.45deg, $red, $reddark);
+    }
   }
 
   img {
-  	width: 75%;
+    width: 75%;
   }
 
   h1 {
-		font-size: 4.5rem;
-		line-height: 120px;
-		/* identical to box height */
+    font-size: 4.5rem;
+    line-height: 120px;
+    /* identical to box height */
     background-image: linear-gradient(45deg, $yellow 20%, $yellowdark 80%);
     background-size: 100%;
     -webkit-background-clip: text;
@@ -52,6 +52,6 @@
     -webkit-text-fill-color: transparent; 
     -moz-text-fill-color: transparent;
 
-  	-webkit-text-stroke: $reddark 2px;
+    -webkit-text-stroke: $reddark 2px;
   }
 }

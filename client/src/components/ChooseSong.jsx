@@ -55,7 +55,7 @@ const Choose = (props) => {
         <Form.Label className="formLabel">
           SONG SELECTION
         </Form.Label>
-        <Form.Control as="select" value={value} onChange={handleChange}>
+        <Form.Control className="formDropdown" as="select" value={value} onChange={handleChange}>
           {titles}
         </Form.Control>
         

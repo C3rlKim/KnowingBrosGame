@@ -13,19 +13,19 @@ const App = () => (
     <Route path="/" exact>
       <Landing/>
     </Route>
-        <Route path="/create">
-        <Create/>
-      </Route>
-        <Route path="/join">
+    <Route path="/create">
+      <Create/>
+    </Route>
+    <Route path="/join">
       <Join/>
     </Route>
-        <Route path="/waitroom">
+    <Route path="/waitroom">
       <WaitingRoom/>
     </Route>
-        <Route path="/room">
+    <Route path="/room">
       <Room/>
     </Route>
-        <Route path="/chat">
+    <Route path="/chat">
       <Chat/>
     </Route>
   </Router>

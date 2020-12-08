@@ -26,19 +26,14 @@ const Guess = (props) => {
   const [max, setMax] = useState(0);
   const playerRef = useRef(null);
 
-  //on mount seek to start
-  useEffect(() => {
-    playerRef.current.player.seekTo(start);
-  }, [playerRef])
-
   //use effect hook to execute sequentially so 'playing' is updated last
   //and not overidden by async updates
   useEffect(() => {
     if (whichPlaying === 0) { 
       setPlaying(false);
-      if (playerRef) playerRef.current.player.seekTo(start);
     }
     else {
+      playerRef.current.player.seekTo(start);
       setPlaying(true);
     }
     if (whichPlaying === 1) { setCount1(count1+1); }
@@ -127,8 +122,8 @@ const Guess = (props) => {
             options: { start_track: trackNumber }
           }
         }}
-        width='100%'
-        height='100%'
+        width="100%"
+        height="100%"
         onProgress={handleProgress}
       />
       

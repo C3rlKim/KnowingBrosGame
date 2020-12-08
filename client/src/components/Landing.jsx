@@ -26,7 +26,7 @@ const Landing = () => {
           </Link>
         </Col>
       </Row>
-      </Container>
+    </Container>
   );
 }
 

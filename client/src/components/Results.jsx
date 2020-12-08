@@ -1,6 +1,9 @@
 import React from 'react';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+import MainButton from './MainButton';
 
 const answer = "Song: Twice - What is Love?";
 
@@ -12,11 +15,13 @@ const hardcodedResponses = [{
 
 const playerAnswers = hardcodedResponses.map((response) => {
   return (
-    <div key={response.name}>
-      <p>{response.name}</p>
-      <p>{response.song}</p>
-      <p>{response.time}</p>
-    </div>
+    <Col xs={12} md={6} lg={4} className="px-1" key={response.name}>
+      <div className="scoreCard">
+        <p>{response.name}</p>
+        <p>{response.song}</p>
+        <p>{response.time}</p>
+      </div>
+    </Col>
   );
 });
 
@@ -27,13 +32,16 @@ const Results = (props) => {
     <div>
       <h1>{answer}</h1>
 
-      <div>
+      <Row>
         {playerAnswers}
-      </div>
+      </Row>
 
-      <Table striped hover>
+      <MainButton>leave game</MainButton>
 
-        <thead>
+      <h3>Scoring rules</h3>
+      <Table striped hover id="ruleTable">
+
+        <thead id="tableHead">
           <tr>
             <th>guess</th>
             <th>1 sec</th>
@@ -67,8 +75,6 @@ const Results = (props) => {
         </tbody>
 
       </Table>
-
-      <Button>leave game</Button>
     </div>
   );
 }

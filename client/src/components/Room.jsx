@@ -49,38 +49,40 @@ const Room = () => {
   ));
 
   return (
-      <Container fluid id="room" >
-          <Row className="roomRow align-items-center">
-            <Col xs={4} sm={3} xl={2} className="roomCol">
+    <Container fluid id="room" >
+      <Row className="roomRow align-items-center">
+        <Col xs={4} sm={3} xl={2} className="roomCol">
 
-              {showPlayerPanel
-              ? <div className="panel playerPanel" onClick={handlePlayerPanelClick}>
-                  <h2>players</h2>
-                  <ul>
-                    {players}
-                  </ul>
-                </div>
-              : <div className="panel playerPanel closed" onClick={handlePlayerPanelClick}></div>
-              }
+          {showPlayerPanel
+          ? <div className="panel playerPanel" onClick={handlePlayerPanelClick}>
+              <h2>players</h2>
+              <ul>
+                {players}
+              </ul>
+            </div>
+          : <div className="panel playerPanel closed" onClick={handlePlayerPanelClick}></div>
+          }
 
-            </Col>
-            <Col xs={4} sm={6} xl={8} >
-              <Page />
-            </Col>
-            <Col xs={4} sm={3} xl={2} className="roomCol">
+        </Col>
 
-              {showChatPanel
-              ? <div className="panel chatPanel" onClick={handleChatPanelClick}>
-                  <h2>chat</h2>
-                  filler, replace with chat later
-                </div>
-              : <div className="panel closed chatPanel" id="chatPanelClosed" onClick={handleChatPanelClick}></div>
-              }
+        <Col xs={4} sm={6} xl={8} >
+          <Page />
+        </Col>
 
-              
-            </Col>
-          </Row>
-        </Container>
+        <Col xs={4} sm={3} xl={2} className="roomCol">
+
+          {showChatPanel
+          ? <div className="panel chatPanel" onClick={handleChatPanelClick}>
+              <h2>chat</h2>
+              filler, replace with chat later
+            </div>
+          : <div className="panel closed chatPanel" id="chatPanelClosed" onClick={handleChatPanelClick}></div>
+          }
+
+          
+        </Col>
+      </Row>
+    </Container>
   );
 }
 
