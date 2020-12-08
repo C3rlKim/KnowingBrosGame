@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
-import ReactPlayer from 'react-player'
+import React, { useEffect, useState } from 'react';
+import Form from 'react-bootstrap/Form';
+import ReactPlayer from 'react-player';
+import MainButton from './MainButton';
 
 const Choose = (props) => {
 	const {handler} = props;
@@ -49,14 +49,19 @@ const Choose = (props) => {
 			<h1>choose a song</h1>
 
 			<Form onSubmit={handleSubmit}>
-				<Button type="submit">submit</Button>
-				<Button>leave game</Button>
+				<MainButton type="submit">submit</MainButton>
+				<MainButton>leave game</MainButton>
 
-				<Form.Label>SONG SELECTION</Form.Label>
+				<Form.Label className="formLabel">
+          SONG SELECTION
+        </Form.Label>
 				<Form.Control as="select" value={value} onChange={handleChange}>
 					{titles}
 				</Form.Control>
 				
+        <Form.Label className="formLabel">
+          SONG PLAYER
+        </Form.Label>
 				<ReactPlayer
 	        url="https://soundcloud.com/kaetly-rojas/sets/kpop"
 	        width='100%'

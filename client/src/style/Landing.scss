@@ -15,22 +15,26 @@
     color: $reddark;
     font-weight: bold;
     font-size: 1.6rem;
-  }
 
-  .roomBtn:hover {
-    color: $yellow;
+    &:hover {
+	    color: $yellow;
+	  }
   }
 
   #createRoomBtn {
   	background: linear-gradient(106.45deg, $yellow 8.47%, $yellowmed 92.4%);
+
+  	&:hover {
+	    background: linear-gradient(106.45deg, $red, $reddark);
+	  }
   }
 
   #joinRoomBtn {
   	background: linear-gradient(106.45deg, $yellowmed 8.47%, $yellowdark 92.4%);
-  }
 
-  #createRoomBtn:hover, #joinRoomBtn:hover {
-    background: linear-gradient(106.45deg, $red, $reddark);
+  	&:hover {
+	    background: linear-gradient(106.45deg, $red, $reddark);
+	  }
   }
 
   img {

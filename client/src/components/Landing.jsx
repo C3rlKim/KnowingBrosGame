@@ -17,8 +17,8 @@ const Landing = () => {
 					</Link>
 				</Col>
 				<Col xs={12} sm={4}>
-						<img alt="logo" src={title}></img>
-						<h1>guess the song</h1>
+					<img alt="logo" src={title}></img>
+					<h1>guess the song</h1>
 				</Col>
 				<Col xs={12} sm={4}>
 					<Link to="/join">

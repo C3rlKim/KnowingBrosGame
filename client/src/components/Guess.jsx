@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useRef } from 'react'
-import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
-import ReactPlayer from 'react-player'
+import React, { useEffect, useState, useRef } from 'react';
+import Form from 'react-bootstrap/Form';
+import ReactPlayer from 'react-player';
+import MainButton from './MainButton';
 
 const start = 10;
 
 const Guess = (props) => {
-	const {handler, trackNumber} = props;
+	let {handler, trackNumber} = props;
   // useEffect(() => {
   // 	const timer = setTimeout(() => {
   // 		console.log(document.querySelectorAll('.ao.ap.ds.b3.bs.bu.bt.dt'));
@@ -78,23 +78,44 @@ const Guess = (props) => {
 			<h1>guess the song</h1>
 			<p>you can play each snippet up to 3 times. you will get more points if you rely on shorter snippets</p>
 
+      <MainButton
+        disabled={(count1 >= 3) || (whichPlaying !== 0)}
+        onClick={handlePlay1sec}
+      >
+        Play 1 sec
+      </MainButton>
+
+      <MainButton
+        disabled={(count5 >= 3) || (whichPlaying !== 0)}
+        onClick={handlePlay5sec}
+      >
+        Play 5 sec
+      </MainButton>
+
+      <MainButton
+        disabled={(count10 >= 3) || (whichPlaying !== 0)}
+        onClick={handlePlay10sec}
+      >
+       Play 10 sec
+      </MainButton>
+
 			<Form>
 				<Form.Group>
-					<Form.Label>SONG ARTIST</Form.Label>
+					<Form.Label className="formLabel">SONG ARTIST</Form.Label>
 					<Form.Control placeholder="twice"></Form.Control>
 				</Form.Group>
 
 				<Form.Group>
-					<Form.Label>SONG TITLE</Form.Label>
+					<Form.Label className="formLabel">SONG TITLE</Form.Label>
 					<Form.Control placeholder="what is love?"></Form.Control>
 				</Form.Group>
 
-				<Button type="submit">submit</Button>
-				<Button>leave game</Button>
+				<MainButton type="submit">submit</MainButton>
+				<MainButton>leave game</MainButton>
 			</Form>
 
-			<p>invalid song choice</p>
-			<p>check spelling of artist or title</p>
+			<p className="errorTxt">invalid song choice</p>
+			<p className="errorTxt">check spelling of artist or title</p>
 
 			<ReactPlayer
 				hidden
@@ -110,9 +131,7 @@ const Guess = (props) => {
         height='100%'
         onProgress={handleProgress}
       />
-      <Button disabled={(count1 >= 3) || (whichPlaying !== 0)} onClick={handlePlay1sec}>Play 1 sec</Button>
-      <Button disabled={(count5 >= 3) || (whichPlaying !== 0)} onClick={handlePlay5sec}>Play 5 sec</Button>
-      <Button disabled={(count10 >= 3) || (whichPlaying !== 0)} onClick={handlePlay10sec}>Play 10 sec</Button>
+      
 		</div>
 	);
 }
