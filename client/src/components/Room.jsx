@@ -11,6 +11,7 @@ import Chat from './Chat';
 
 import '../style/Room.scss';
 
+
 const Room = () => {
   let isJudge = true; //add logic to determine whether judge or guesser
 
@@ -22,24 +23,14 @@ const Room = () => {
     setPage(newpage);
   }
 
-  const handlePlayerPanelClick = (newpage) => {
+  const handlePlayerPanelClick = (e) => {
+    e.preventDefault();
     setShowPlayerPanel((prev) => !prev);
   }
 
-  const handleChatPanelClick = (newpage) => {
+  const handleChatPanelClick = (e) => {
+    e.preventDefault();
     setShowChatPanel((prev) => !prev);
-  }
-
-  const Page = () => {
-    if (isJudge) {
-      if (page === "choose") return <ChooseSong handler={handler} />;
-      if (page === "wait") return <Wait isJudge={isJudge} handler={handler} />
-    }
-    else {
-      if (page === "wait") return <Wait isJudge={isJudge} handler={handler} />;
-      if (page === "guess") return <Guess handler={handler} />;
-    }
-    return <Results handler={handler} />;
   }
 
   const playerList = ["one", "two", "three"]; //change
@@ -66,7 +57,10 @@ const Room = () => {
         </Col>
 
         <Col xs={4} sm={6} xl={8} >
-          <Page />
+          {page && handler && page==="choose" && <ChooseSong handler={handler}/>}
+          {page && handler && page==="wait" && <Wait isJudge={isJudge} handler={handler} />}
+          {page && handler && page==="guess" && <Guess handler={handler} />}
+          {page && handler && page==="Results" && <Results handler={handler} />}
         </Col>
 
         <Col xs={4} sm={3} xl={2} className="roomCol">

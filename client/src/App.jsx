@@ -2,8 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 
 import Landing from './components/Landing';
-import Create from './components/Create';
-import Join from './components/Join';
+import CreateJoin from './components/CreateJoin';
 import WaitingRoom from './components/WaitingRoom';
 import Room from './components/Room';
 import Chat from './components/Chat';
@@ -14,10 +13,10 @@ const App = () => (
       <Landing/>
     </Route>
     <Route path="/create">
-      <Create/>
+      <CreateJoin option={true}/>
     </Route>
     <Route path="/join">
-      <Join/>
+      <CreateJoin option={false}/>
     </Route>
     <Route path="/waitroom">
       <WaitingRoom/>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useHistory } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import ReactPlayer from 'react-player';
 import MainButton from './MainButton';
@@ -7,16 +8,7 @@ const start = 10;
 
 const Guess = (props) => {
   let {handler, trackNumber} = props;
-  // useEffect(() => {
-  //  const timer = setTimeout(() => {
-  //    console.log(document.querySelectorAll('.ao.ap.ds.b3.bs.bu.bt.dt'));
-   //    console.log(Array.from(document.querySelectorAll('.ao.ap.ds.b3.bs.bu.bt.dt')).find(el => el.textContent === "Aloha"));
-   //    //can't use ref because iframe blocks cross origin access
-   //    //Array.from(document.querySelectorAll('.ao.ap.ds.b3.bs.bu.bt.dt')).find(el => el.textContent === "Aloha");
-
-   //  }, 5000);
-   //  return () => clearTimeout(timer);
-  // }, [])
+  const history = useHistory();
   trackNumber = 0;//hardcode prop
   const [playing, setPlaying] = useState(false);
   const [count1, setCount1] = useState(0);
@@ -68,6 +60,12 @@ const Guess = (props) => {
     }
   }
 
+  const handleLeave =() => {
+    //notify other players
+    //return to landing page
+    history.push('/');
+  }
+
   return (
     <div>
       <h1>guess the song</h1>
@@ -106,7 +104,7 @@ const Guess = (props) => {
         </Form.Group>
 
         <MainButton type="submit">submit</MainButton>
-        <MainButton>leave game</MainButton>
+        <MainButton onClick={handleLeave}>leave game</MainButton>
       </Form>
 
       <p className="errorTxt">invalid song choice</p>

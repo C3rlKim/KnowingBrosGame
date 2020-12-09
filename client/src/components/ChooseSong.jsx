@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import ReactPlayer from 'react-player';
 import MainButton from './MainButton';
 
 const Choose = (props) => {
-  const {handler} = props;
+  const { handler } = props;
   const [titles, setTitles] = useState(null);
   const [value, setValue] = useState("choose a song");
+  const history = useHistory();
 
   useEffect(() => {
     async function getPlaylist() {
@@ -43,6 +45,12 @@ const Choose = (props) => {
     handler("wait");
   }
 
+  const handleLeave =() => {
+    //notify other players
+    //return to landing page
+    history.push('/');
+  }
+
   return (
     <div>
       <h1>you are the judge for this round!</h1>
@@ -50,7 +58,7 @@ const Choose = (props) => {
 
       <Form onSubmit={handleSubmit}>
         <MainButton type="submit">submit</MainButton>
-        <MainButton>leave game</MainButton>
+        <MainButton onClick={handleLeave}>leave game</MainButton>
 
         <Form.Label className="formLabel">
           SONG SELECTION
