@@ -57,10 +57,12 @@ const Room = () => {
         </Col>
 
         <Col xs={4} sm={6} xl={8} >
-          {page && handler && page==="choose" && <ChooseSong handler={handler}/>}
-          {page && handler && page==="wait" && <Wait isJudge={isJudge} handler={handler} />}
-          {page && handler && page==="guess" && <Guess handler={handler} />}
-          {page && handler && page==="Results" && <Results handler={handler} />}
+          {page && handler &&
+            ((page==="choose" && <ChooseSong handler={handler}/>)
+            || (page==="wait" && <Wait isJudge={isJudge} handler={handler} />)
+            || (page==="guess" && <Guess handler={handler} />)
+            || (page==="results" && <Results handler={handler} />))
+          }
         </Col>
 
         <Col xs={4} sm={3} xl={2} className="roomCol">

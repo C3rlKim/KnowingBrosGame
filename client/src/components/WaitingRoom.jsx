@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+
 import AccentButton from './AccentButton';
 import '../style/CreateJoinWait.scss';
 
@@ -15,7 +17,6 @@ const players = hardcodedList.map((name) => {
 })
 
 const WaitingRoom = () => {
-  const history = useHistory();
   const [spin, setSpin] = useState(false);
 
   useEffect( () => {
@@ -30,12 +31,6 @@ const WaitingRoom = () => {
 
   const handleCloudClick = (e) => {
     setSpin(true);
-  }
-
-  const handleLeave =() => {
-    //notify other players
-    //return to landing page
-    history.push('/');
   }
 
   return (
@@ -67,7 +62,9 @@ const WaitingRoom = () => {
           <h1>waiting room</h1>
           <p className="white">host will start the game one all players have joined</p>
           <p className="white">no one will be able to join once it starts</p>
-          <AccentButton onClick={handleLeave}>leave game</AccentButton>
+          <Link to={{pathname: "/"}}>
+            <AccentButton>leave game</AccentButton>
+          </Link>
           <h6>PLAYERS</h6>
           <div className="white">
             {players}
