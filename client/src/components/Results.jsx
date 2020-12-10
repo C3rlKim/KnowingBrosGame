@@ -1,6 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+
 import Table from 'react-bootstrap/Table';
-import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import MainButton from './MainButton';
@@ -36,7 +37,9 @@ const Results = (props) => {
         {playerAnswers}
       </Row>
 
-      <MainButton>leave game</MainButton>
+      <Link to={{pathname: "/"}}>
+        <MainButton>leave game</MainButton>
+      </Link>
 
       <h3>Scoring rules</h3>
       <Table striped hover id="ruleTable">
