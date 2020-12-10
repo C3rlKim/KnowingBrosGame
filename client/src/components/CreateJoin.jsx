@@ -11,8 +11,8 @@ import '../style/CreateJoinWait.scss';
 
 const CreateJoin = (props) => {
   const { option } = props;
-  const [room, setRoom] = useState("Tommy Trojan");
-  const [name, setName] = useState("Nefarious Nayeon");
+  const [room, setRoom] = useState("");
+  const [name, setName] = useState("");
   const [spin, setSpin] = useState(false);
 
   const handleChangeRoom = (e) => {
@@ -26,6 +26,7 @@ const CreateJoin = (props) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     //send room to server, create connection
+    //Karl: I used react router dom link instead, need to talk about merging
   }
 
   useEffect( () => {
@@ -35,7 +36,7 @@ const CreateJoin = (props) => {
         clearTimeout(timer)
       }
     }
-    
+
   }, [spin])
 
   const handleCloudClick = (e) => {
@@ -48,15 +49,24 @@ const CreateJoin = (props) => {
       <Form>
         <Form.Group>
           <Form.Label className="formLabel">ROOM NAME</Form.Label>
-          <Form.Control value={room} onChange={handleChangeRoom}></Form.Control>
+          <Form.Control value={room} onChange={handleChangeRoom} placeHolder="Nefarious Nayeon">
+          </Form.Control>
         </Form.Group>
 
         <Form.Group>
           <Form.Label className="formLabel">YOUR NAME</Form.Label>
-          <Form.Control value={name} onChange={handleChangeName}></Form.Control>
+          <Form.Control value={name} onChange={handleChangeName} placeHolder="Tommy Trojan">
+          </Form.Control>
         </Form.Group>
       </Form>
-      <AccentButton type="submit" onSubmit={handleSubmit}>submit</AccentButton>
+      <Link
+        to={{
+          pathname: "/chat",
+          state: { roomName: room, userName: name}
+        }}
+      >
+        <AccentButton type="submit" onSubmit={handleSubmit}>submit</AccentButton>
+      </Link>
 
       <Link className="roomLink" to="/create">
         actually, I want to create a room
@@ -68,9 +78,25 @@ const CreateJoin = (props) => {
     <div>
       <h1>create room</h1>
       <Form>
-        <Form.Label className="formLabel">ROOM NAME</Form.Label>
-        <Form.Control value={room} onChange={handleChangeRoom}></Form.Control>
-        <AccentButton type="submit" onSubmit={handleSubmit}>submit</AccentButton>
+        <Form.Group>
+          <Form.Label className="formLabel">ROOM NAME</Form.Label>
+          <Form.Control value={room} onChange={handleChangeRoom} placeHolder = "Nefarious Nayeon">
+          </Form.Control>
+        </Form.Group>
+
+        <Form.Group>
+          <Form.Label className="formLabel">YOUR NAME</Form.Label>
+          <Form.Control value={name} onChange={handleChangeName} placeHolder="Tommy Trojan">
+          </Form.Control>
+        </Form.Group>
+        <Link
+          to={{
+            pathname: "/chat",
+            state: { roomName: room, userName: name}
+          }}
+        >
+          <AccentButton type="submit" onSubmit={handleSubmit}>submit</AccentButton>
+        </Link>
         <Link className="roomLink" to="/join">
           actually, I want to join a room
         </Link>
