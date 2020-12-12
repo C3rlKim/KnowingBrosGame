@@ -1,5 +1,5 @@
-@import '~bootstrap/scss/bootstrap';
-@import 'colors';
+@use '~bootstrap/scss/bootstrap' as *;
+@use 'colors' as appColor;
 @import url('https://fonts.googleapis.com/css2?family=Gaegu&display=swap');
 
 html {
@@ -14,10 +14,9 @@ html {
       height: 90vh;
 
       .formDropdown {
-        color: $brown;
+        color: appColor.$brown;
         filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.7));
         cursor: pointer;
-
       }
 
       .formLabel {
@@ -28,7 +27,7 @@ html {
       }
 
       .btn-main {
-        background-color: $brown;
+        background-color: appColor.$brown;
         color: white;
         border: none;
         border-radius: 25px;
@@ -37,18 +36,18 @@ html {
 
         &:hover:not([disabled]) {
           background-color: white;
-          color: $brown;
+          color: appColor.$brown;
         }
       }
 
       .errorTxt {
-        color: $red;
+        color: appColor.$red;
         margin: 0;
       }
 
       .scoreCard {
         background-color: white;
-        color: $brown;
+        color: appColor.$brown;
         border-radius: 25px;
         filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.7));
       }
@@ -56,7 +55,7 @@ html {
       #ruleTable {
         background-color: white;
         border-radius: 25px !important;
-        color: $green;
+        color: appColor.$green;
         filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.7));
       }
     }
