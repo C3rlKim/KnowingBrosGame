@@ -1,4 +1,4 @@
-@import 'colors';
+@use 'colors' as *;
 
 .purple {
   color: $yellow;
@@ -60,7 +60,7 @@
       margin-left: -1000px;
     }
     100% {
-      margin-left: 100%; 
+      margin-left: 100%;
     }
   }
 
@@ -97,7 +97,7 @@
     -webkit-animation: animateCloud 35s linear infinite;
     -moz-animation: animateCloud 35s linear infinite;
     animation: animateCloud 35s linear infinite;
-    
+
     -webkit-transform: scale(0.65);
     -moz-transform: scale(0.65);
     transform: scale(0.65);
@@ -107,7 +107,7 @@
     -webkit-animation: animateCloud 20s linear infinite;
     -moz-animation: animateCloud 20s linear infinite;
     animation: animateCloud 20s linear infinite;
-    
+
     -webkit-transform: scale(0.3);
     -moz-transform: scale(0.3);
     transform: scale(0.3);
@@ -117,7 +117,7 @@
     -webkit-animation: animateCloud 30s linear infinite;
     -moz-animation: animateCloud 30s linear infinite;
     animation: animateCloud 30s linear infinite;
-    
+
     -webkit-transform: scale(0.5);
     -moz-transform: scale(0.5);
     transform: scale(0.5);
@@ -127,7 +127,7 @@
     -webkit-animation: animateCloud 18s linear infinite;
     -moz-animation: animateCloud 18s linear infinite;
     animation: animateCloud 18s linear infinite;
-    
+
     -webkit-transform: scale(0.4);
     -moz-transform: scale(0.4);
     transform: scale(0.4);
@@ -137,7 +137,7 @@
     -webkit-animation: animateCloud 25s linear infinite;
     -moz-animation: animateCloud 25s linear infinite;
     animation: animateCloud 25s linear infinite;
-    
+
     -webkit-transform: scale(0.55);
     -moz-transform: scale(0.55);
     transform: scale(0.55);
@@ -165,11 +165,11 @@
   .cloud {
     cursor: pointer;
     background: $purple;
-    
+
     -webkit-border-radius: 100px;
     -moz-border-radius: 100px;
     border-radius: 100px;
-    
+
     -webkit-box-shadow: 0 8px 5px rgba(0, 0, 0, 0.1);
     -moz-box-shadow: 0 8px 5px rgba(0, 0, 0, 0.1);
     box-shadow: 0 8px 5px rgba(0, 0, 0, 0.1);
