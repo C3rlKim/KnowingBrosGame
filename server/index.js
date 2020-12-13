@@ -1,3 +1,6 @@
+//testing
+const { roomExists, addUser, userExists } = require('./users.js');
+
 const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
@@ -23,4 +26,11 @@ io.on("connect", socket => {
   });
 });
 
-server.listen(PORT,() => console.log(`server listening on port: ${PORT}`));
+app.get("/test", (req,res) => {
+  addUser({ user: "Karl", room: "Karl room" });
+  console.log(userExists({ user: "Karl", room: "Karl room" }));
+  console.log(roomExists("Karl room"));
+  res.send("completed");
+});
+
+server.listen(PORT,() => console.log(`server listensdafng on port: ${PORT}`));
