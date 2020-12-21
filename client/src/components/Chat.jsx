@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
-import io from 'socket.io-client';
-
-const ENDPOINT = "http://localhost:5000";
-// Should the connection begin in login?
-let socket = io(ENDPOINT);
+import socket from '../socket.js';
 
 const Chat = () => {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
 
+  // ******
+  // Have to talk to Kelley about how the room and user data will enter this component
+  // The current way below is deprecated
   const location = useLocation();
   const roomName = useRef(location.state.roomName);
   const userName = useRef(location.state.userName);

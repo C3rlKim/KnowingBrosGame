@@ -21,7 +21,7 @@ const Guess = (props) => {
   //use effect hook to execute sequentially so 'playing' is updated last
   //and not overidden by async updates
   useEffect(() => {
-    if (whichPlaying === 0) { 
+    if (whichPlaying === 0) {
       setPlaying(false);
     }
     else {
@@ -51,7 +51,7 @@ const Guess = (props) => {
   const handlePlay10sec = () => {
     setWhichPlaying(10);
   }
-
+  // Latency issues
   const handleProgress = (progress) => {
     console.log("pro", progress);
     if ((progress.playedSeconds - start) >= whichPlaying) {
@@ -109,7 +109,7 @@ const Guess = (props) => {
       <ReactPlayer
         hidden
         ref={playerRef}
-        url="https://soundcloud.com/kaetly-rojas/sets/kpop" 
+        url="https://soundcloud.com/kaetly-rojas/sets/kpop"
         playing={playing}
         config={{
           soundcloud: {
@@ -120,7 +120,7 @@ const Guess = (props) => {
         height="100%"
         onProgress={handleProgress}
       />
-      
+
     </div>
   );
 }

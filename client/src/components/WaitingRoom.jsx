@@ -8,16 +8,25 @@ import Col from 'react-bootstrap/Col';
 import AccentButton from './AccentButton';
 import '../style/CreateJoinWait.scss';
 
-const hardcodedList = ["Kelley", "Karl"];
-
-const players = hardcodedList.map((name) => {
-  return (
-    <div>{name}</div>
-  );
-})
+import socket from '../socket';
 
 const WaitingRoom = () => {
+  const [players, setPlayers] = useState([]);
   const [spin, setSpin] = useState(false);
+
+  const handleCloudClick = (e) => {
+    setSpin(true);
+  }
+  // Even though the effect is only called once
+  // the socket will be continue to listen
+  useEffect( () => {
+    // Setting up an event listener before
+    // confirming to the server that the user was added
+    socket.on("playersInRoom",(updatedList) => {
+      setPlayers(updatedList);
+    });
+    socket.emit("userAdded");
+  }, [])
 
   useEffect( () => {
     if (spin) {
@@ -28,10 +37,6 @@ const WaitingRoom = () => {
     }
 
   }, [spin])
-
-  const handleCloudClick = (e) => {
-    setSpin(true);
-  }
 
   return (
     <Container fluid className="purple">
@@ -61,13 +66,12 @@ const WaitingRoom = () => {
         <Col xs={12} md={6} lg={3} className="m-auto">
           <h1>waiting room</h1>
           <p className="white">host will start the game one all players have joined</p>
-          <p className="white">no one will be able to join once it starts</p>
-          <Link to={{pathname: "/"}}>
+          <Link to="/">
             <AccentButton>leave game</AccentButton>
           </Link>
           <h6>PLAYERS</h6>
           <div className="white">
-            {players}
+            {players.map((player,idx) => <div key={idx}> {player} </div>)}
           </div>
         </Col>
       </Row>

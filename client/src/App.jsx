@@ -13,10 +13,10 @@ const App = () => (
       <Landing/>
     </Route>
     <Route path="/create">
-      <CreateJoin option={true}/>
+      <CreateJoin option="create"/>
     </Route>
     <Route path="/join">
-      <CreateJoin option={false}/>
+      <CreateJoin option="join"/>
     </Route>
     <Route path="/waitroom">
       <WaitingRoom/>
