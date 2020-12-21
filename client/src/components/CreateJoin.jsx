@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
-import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Container from 'react-bootstrap/Container';
 
-import AccentButton from './AccentButton';
+import CreateJoinForm from './CreateJoinForm';
 import '../style/CreateJoinWait.scss';
+
+import socket from '../socket';
 
 const CreateJoin = (props) => {
   const { option } = props;
   const [room, setRoom] = useState("");
   const [name, setName] = useState("");
   const [spin, setSpin] = useState(false);
+  const [errorMess, setErrorMess] = useState("");
+  const history = useHistory();
 
   const handleChangeRoom = (e) => {
     setRoom(e.target.value);
@@ -25,8 +28,28 @@ const CreateJoin = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    //send room to server, create connection
-    //Karl: I used react router dom link instead, need to talk about merging
+
+    // Validation of empty room name and your name
+    if(!room || !name){
+      setErrorMess("Fill in both room name and your name!");
+      return;
+    }
+
+    socket.emit("validation", { name, room, option }, (status, error) => {
+      if(status==="invalid"){
+        setErrorMess(error);
+      }
+      else if(status==="waitingroom"){
+        history.push("/waitroom");
+      }
+      else if(status==="ingame"){
+        // By Pass user to the gameroom (have to implement)
+      }
+    });
+  }
+
+  const handleCloudClick = (e) => {
+    setSpin(true);
   }
 
   useEffect( () => {
@@ -38,71 +61,6 @@ const CreateJoin = (props) => {
     }
 
   }, [spin])
-
-  const handleCloudClick = (e) => {
-    setSpin(true);
-  }
-
-  const joinForm = (
-    <div>
-      <h1>join room</h1>
-      <Form>
-        <Form.Group>
-          <Form.Label className="formLabel">ROOM NAME</Form.Label>
-          <Form.Control value={room} onChange={handleChangeRoom} placeHolder="Nefarious Nayeon">
-          </Form.Control>
-        </Form.Group>
-
-        <Form.Group>
-          <Form.Label className="formLabel">YOUR NAME</Form.Label>
-          <Form.Control value={name} onChange={handleChangeName} placeHolder="Tommy Trojan">
-          </Form.Control>
-        </Form.Group>
-      </Form>
-      <Link
-        to={{
-          pathname: "/chat",
-          state: { roomName: room, userName: name}
-        }}
-      >
-        <AccentButton type="submit" onSubmit={handleSubmit}>submit</AccentButton>
-      </Link>
-
-      <Link className="roomLink" to="/create">
-        actually, I want to create a room
-      </Link>
-    </div>
-  );
-
-  const createForm = (
-    <div>
-      <h1>create room</h1>
-      <Form>
-        <Form.Group>
-          <Form.Label className="formLabel">ROOM NAME</Form.Label>
-          <Form.Control value={room} onChange={handleChangeRoom} placeHolder = "Nefarious Nayeon">
-          </Form.Control>
-        </Form.Group>
-
-        <Form.Group>
-          <Form.Label className="formLabel">YOUR NAME</Form.Label>
-          <Form.Control value={name} onChange={handleChangeName} placeHolder="Tommy Trojan">
-          </Form.Control>
-        </Form.Group>
-        <Link
-          to={{
-            pathname: "/chat",
-            state: { roomName: room, userName: name}
-          }}
-        >
-          <AccentButton type="submit" onSubmit={handleSubmit}>submit</AccentButton>
-        </Link>
-        <Link className="roomLink" to="/join">
-          actually, I want to join a room
-        </Link>
-      </Form>
-    </div>
-  );
 
   return (
     <Container fluid className="purple">
@@ -131,7 +89,16 @@ const CreateJoin = (props) => {
 
       <Row className="justify-content-center">
         <Col xs={12} md={6} lg={3} className="m-auto">
-          {option === true ? createForm : joinForm}
+          <CreateJoinForm
+            name={name}
+            room={room}
+            option={option}
+            handleChangeName={handleChangeName}
+            handleChangeRoom={handleChangeRoom}
+            handleSubmit={handleSubmit}
+            errorMess={errorMess}
+            setErrorMess={setErrorMess}
+          />
         </Col>
       </Row>
     </Container>
