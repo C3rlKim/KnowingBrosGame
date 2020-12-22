@@ -55,6 +55,16 @@ io.on("connect", socket => {
     const room = getUser(socket.id).room;
     io.in(room).emit("playersInRoom",getUsersInRoom(room));
   });
+  // Remove user when user leaves game because cannot explicitly call disconnect
+  socket.on("userRemoved", () => {
+    const user = getUser(socket.id);
+    removeUser(user.name,user.room,socket.id);
+    socket.to(user.room).emit("playersInRoom",getUsersInRoom(user.room));
+  });
+
+  socket.on("start", (roomName) => {
+    socket.to(roomName).emit("start");
+  });
 
 
   // Join socket to a room specisfied by client

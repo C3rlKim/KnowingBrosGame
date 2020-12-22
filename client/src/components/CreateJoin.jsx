@@ -40,10 +40,11 @@ const CreateJoin = (props) => {
         setErrorMess(error);
       }
       else if(status==="waitingroom"){
-        history.push("/waitroom");
+        history.push("/waitroom/" + room + "/" + name);
       }
       else if(status==="ingame"){
         // By Pass user to the gameroom (have to implement)
+        history.push("/room/" + room + "/" + name);
       }
     });
   }

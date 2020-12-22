@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import socket from '../socket.js';
 
 const Chat = () => {
@@ -9,13 +9,17 @@ const Chat = () => {
   // ******
   // Have to talk to Kelley about how the room and user data will enter this component
   // The current way below is deprecated
-  const location = useLocation();
-  const roomName = useRef(location.state.roomName);
-  const userName = useRef(location.state.userName);
+  // const location = useLocation();
+  
+  // const roomName = useRef(location.state.roomName);
+  // const userName = useRef(location.state.userName);
+  let { roomname, username } = useParams();
+  const roomName = roomname;
+  const userName = username;
 
   useEffect(() => {
     // Request to join room
-    socket.emit("join", roomName.current);
+    socket.emit("join", roomName);
 
     // Listening to message from server
     socket.on("serverMessage", (msgObj) => {
@@ -26,7 +30,7 @@ const Chat = () => {
   const sendMessage = event => {
     event.preventDefault();
 
-    socket.emit("sendMessage",{ input, userName: userName.current, roomName: roomName.current }, () => {
+    socket.emit("sendMessage",{ input, userName: userName, roomName: roomName }, () => {
       // socket.io acknowledgement
       setInput("");
     });
@@ -34,7 +38,7 @@ const Chat = () => {
 
   return (
     <div>
-      <p>Room name: {roomName.current}</p>
+      <p>Room name: {roomName}</p>
       {messages.map((msgObj, idx) => <p key={idx}>{msgObj.userName} : {msgObj.message}</p>)}
       <input type="text"
         value={input}
