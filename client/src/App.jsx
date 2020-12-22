@@ -18,10 +18,10 @@ const App = () => (
     <Route path="/join">
       <CreateJoin option="join"/>
     </Route>
-    <Route path="/waitroom">
+    <Route path="/waitroom/:roomname/:username">
       <WaitingRoom/>
     </Route>
-    <Route path="/room">
+    <Route path="/room/:roomname/:username">
       <Room/>
     </Route>
     <Route path="/chat">

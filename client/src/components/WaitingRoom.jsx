@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams, useHistory } from 'react-router-dom';
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -13,6 +13,9 @@ import socket from '../socket';
 const WaitingRoom = () => {
   const [players, setPlayers] = useState([]);
   const [spin, setSpin] = useState(false);
+  const history = useHistory();
+
+  let { roomname, username } = useParams();
 
   const handleCloudClick = (e) => {
     setSpin(true);
@@ -24,6 +27,9 @@ const WaitingRoom = () => {
     // confirming to the server that the user was added
     socket.on("playersInRoom",(updatedList) => {
       setPlayers(updatedList);
+    });
+    socket.on("start", () => {
+      history.push("/room/" + roomname + "/" + username);
     });
     socket.emit("userAdded");
   }, [])
@@ -37,6 +43,14 @@ const WaitingRoom = () => {
     }
 
   }, [spin])
+
+  const handleLeave = () => {
+    socket.emit("userRemoved");
+  }
+
+  const handleStart = () => {
+    socket.emit("start", (roomname));
+  }
 
   return (
     <Container fluid className="purple">
@@ -67,7 +81,10 @@ const WaitingRoom = () => {
           <h1>waiting room</h1>
           <p className="white">host will start the game one all players have joined</p>
           <Link to="/">
-            <AccentButton>leave game</AccentButton>
+            <AccentButton onClick={handleLeave}>leave game</AccentButton>
+          </Link>
+          <Link to={"/room/" + roomname + "/" + username}>
+            <AccentButton onClick={handleStart}>start game</AccentButton>
           </Link>
           <h6>PLAYERS</h6>
           <div className="white">

@@ -25,7 +25,7 @@ const roomExists = (room) => room in roomToUsersSet
 const nameIsTaken = (name, room) => roomToUsersSet[room].has(name)
 
 // Host is the first user that was appended (for now)
-const getHost = (room) => roomToUsersArray[rooom][0]
+const getHost = (room) => roomToUsersArray[room][0]
 const getUsersInRoom = (room) => roomToUsersArray[room]
 
 const addToInGame = (room) => inGameRooms.add(room)

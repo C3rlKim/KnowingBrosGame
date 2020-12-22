@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
+
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -30,7 +32,7 @@ const Room = () => {
 
   const handleChatPanelClick = (e) => {
     e.preventDefault();
-    setShowChatPanel((prev) => !prev);
+    //setShowChatPanel((prev) => !prev);
   }
 
   const playerList = ["one", "two", "three"]; //change
@@ -70,7 +72,7 @@ const Room = () => {
           {showChatPanel
           ? <div className="panel chatPanel" onClick={handleChatPanelClick}>
               <h2>chat</h2>
-              filler, replace with chat later
+              <Chat />
             </div>
           : <div className="panel closed chatPanel" id="chatPanelClosed" onClick={handleChatPanelClick}></div>
           }
