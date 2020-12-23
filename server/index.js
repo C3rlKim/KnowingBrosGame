@@ -9,20 +9,32 @@ const io = require('socket.io')(server, {
 });
 
 const PORT = process.env.PORT || 5000;
-
-const { roomExists, addUser, nameIsTaken, roomIsInGame, getUsersInRoom, getUser, removeUser } = require('./roomAndUser.js');
+const {
+  addUser, removeUser,
+  roomExists, nameIsTaken,
+  getHost, getUsersInRoom,
+  addToInGame,roomIsInGame,
+  getUser
+} = require('./roomAndUser.js');
 
 io.on("connect", socket => {
+  console.log(`${socket.id} connected`);
+
   // Validates user input when creating or joining room
+  // and handles creating room and joining
   socket.on("validation", ({ name, room, option }, callback) => {
     if(option === "create") {
       if(!roomExists(room)){
-        // Creates the room and adds user as host
         // server in memory data store
         addUser(name, room, socket.id);
         // socket.io library data store
         socket.join(room);
-        callback("waitingroom");
+        if(roomIsInGame(room)){
+          callback("ingame");
+        }
+        else{
+          callback("waitingroom");  
+        }
       }
       else{
         callback("invalid",`The room name "${room}" is already being used`);
@@ -41,7 +53,7 @@ io.on("connect", socket => {
           }
         }
         else{
-          callback("invalid",`The username "${name}"" is already being used`);
+          callback("invalid",`The username "${name}" is already being used`);
         }
       }
       else{
@@ -50,24 +62,27 @@ io.on("connect", socket => {
     }
   });
 
-  // Server emits list of players in the room once a new user is added
-  socket.on("userAdded", () => {
+  // Server emits list of players in the room once a new user enters waiting room
+  socket.on("newUserInWaitingRoom", () => {
     const room = getUser(socket.id).room;
     io.in(room).emit("playersInRoom",getUsersInRoom(room));
   });
-  // Remove user when user leaves game because cannot explicitly call disconnect
-  socket.on("userRemoved", () => {
+
+  // Does not start a new socket connection, just exits from room
+  socket.on("leaveGame", () => {
     const user = getUser(socket.id);
     removeUser(user.name,user.room,socket.id);
+    socket.leave(user.room);
     socket.to(user.room).emit("playersInRoom",getUsersInRoom(user.room));
   });
 
-  socket.on("start", (roomName) => {
-    socket.to(roomName).emit("start");
+  // Starts the game when a user clicks start
+  socket.on("startClicked", (roomName) => {
+    addToInGame(roomName);
+    io.in(roomName).emit("startGame");
   });
 
-
-  // Join socket to a room specisfied by client
+  // Join socket to a room specified by client
   socket.on("join", (roomName) => {
     socket.join(roomName);
   })
@@ -78,10 +93,14 @@ io.on("connect", socket => {
   });
 
   // Removes user from server data store and emits updated list of players in room
+  // socket io automatically handles its own leaving room functionality
   socket.on("disconnect", () => {
+    console.log(`${socket.id} disconnected`);
     const user = getUser(socket.id);
-    removeUser(user.name,user.room,socket.id);
-    socket.to(user.room).emit("playersInRoom",getUsersInRoom(user.room));
+    if(user) {
+      removeUser(user.name,user.room,socket.id);
+      socket.to(user.room).emit("playersInRoom",getUsersInRoom(user.room));
+    }
   })
 });
 
