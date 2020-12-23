@@ -24,14 +24,15 @@ const WaitingRoom = () => {
   // the socket will be continue to listen
   useEffect( () => {
     // Setting up an event listener before
-    // confirming to the server that the user was added
+    // confirming to the server that there is a new user
     socket.on("playersInRoom",(updatedList) => {
       setPlayers(updatedList);
     });
-    socket.on("start", () => {
+    socket.emit("newUserInWaitingRoom");
+
+    socket.on("startGame", () => {
       history.push("/room/" + roomname + "/" + username);
     });
-    socket.emit("userAdded");
   }, [])
 
   useEffect( () => {
@@ -45,11 +46,11 @@ const WaitingRoom = () => {
   }, [spin])
 
   const handleLeave = () => {
-    socket.emit("userRemoved");
+    socket.emit("leaveGame");
   }
 
   const handleStart = () => {
-    socket.emit("start", (roomname));
+    socket.emit("startClicked", (roomname));
   }
 
   return (
@@ -79,7 +80,7 @@ const WaitingRoom = () => {
       <Row className="justify-content-center">
         <Col xs={12} md={6} lg={3} className="m-auto">
           <h1>waiting room</h1>
-          <p className="white">host will start the game one all players have joined</p>
+          <p className="white">host will start the game once all players have joined</p>
           <Link to="/">
             <AccentButton onClick={handleLeave}>leave game</AccentButton>
           </Link>
