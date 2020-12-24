@@ -84,8 +84,9 @@ io.on("connect", socket => {
   });
 
   // Listen client's sendMessage and emits message to the room
-  socket.on("sendMessage",({ input: message, userName, roomName }, msgConfirm) => {
-    io.in(roomName).emit("serverMessage", { message, userName });
+  socket.on("sendMessage",(message, msgConfirm) => {
+    const user = getUser(socket.id);
+    io.in(user.room).emit("serverMessage", { message, userName: user.name });
     msgConfirm();
   });
 
