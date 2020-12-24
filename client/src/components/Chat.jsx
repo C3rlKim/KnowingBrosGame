@@ -10,7 +10,7 @@ const Chat = () => {
   // Have to talk to Kelley about how the room and user data will enter this component
   // The current way below is deprecated
   // const location = useLocation();
-  
+
   // const roomName = useRef(location.state.roomName);
   // const userName = useRef(location.state.userName);
   let { roomname, username } = useParams();
@@ -18,9 +18,6 @@ const Chat = () => {
   const userName = username;
 
   useEffect(() => {
-    // Request to join room
-    socket.emit("join", roomName);
-
     // Listening to message from server
     socket.on("serverMessage", (msgObj) => {
       setMessages(prevMsgs =>[ ...prevMsgs, msgObj ]);

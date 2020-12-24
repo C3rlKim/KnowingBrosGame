@@ -33,7 +33,7 @@ io.on("connect", socket => {
           callback("ingame");
         }
         else{
-          callback("waitingroom");  
+          callback("waitingroom");
         }
       }
       else{
@@ -62,13 +62,13 @@ io.on("connect", socket => {
     }
   });
 
-  // Server emits list of players in the room once a new user enters waiting room
-  socket.on("newUserInWaitingRoom", () => {
+  // Server emits list of players in the room
+  socket.on("getPlayersInRoom", () => {
     const room = getUser(socket.id).room;
     io.in(room).emit("playersInRoom",getUsersInRoom(room));
   });
 
-  // Does not start a new socket connection, just exits from room
+  // Does not end socket connection, just exits from room
   socket.on("leaveGame", () => {
     const user = getUser(socket.id);
     removeUser(user.name,user.room,socket.id);
@@ -77,15 +77,12 @@ io.on("connect", socket => {
   });
 
   // Starts the game when a user clicks start
-  socket.on("startClicked", (roomName) => {
-    addToInGame(roomName);
-    io.in(roomName).emit("startGame");
+  socket.on("startClicked", () => {
+    const user = getUser(socket.id)
+    addToInGame(user.room);
+    io.in(user.room).emit("startGame");
   });
 
-  // Join socket to a room specified by client
-  socket.on("join", (roomName) => {
-    socket.join(roomName);
-  })
   // Listen client's sendMessage and emits message to the room
   socket.on("sendMessage",({ input: message, userName, roomName }, msgConfirm) => {
     io.in(roomName).emit("serverMessage", { message, userName });
