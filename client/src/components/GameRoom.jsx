@@ -19,15 +19,10 @@ import socket from '../socket'
 const GameRoom = () => {
   let isJudge = true; //add logic to determine whether judge or guesser
 
+  const [players, setPlayers] = useState([]);
   const [page, setPage] = useState("choose");
   const [showPlayerPanel, setShowPlayerPanel] = useState(true);
   const [showChatPanel, setShowChatPanel] = useState(true);
-
-  const playerList = ["one", "two", "three"]; //change
-
-  const players = playerList.map((player) => (
-    <li key={player}>{player}</li>
-  ));
 
   const handler = (newpage) => {
     setPage(newpage);
@@ -43,6 +38,13 @@ const GameRoom = () => {
     //setShowChatPanel((prev) => !prev);
   }
 
+  useEffect(() => {
+    socket.on("playersInRoom",(updatedList) => {
+      setPlayers(updatedList);
+    });
+    socket.emit("getPlayersInRoom");
+  })
+
   return (
     <Container fluid id="room" >
       <Row className="roomRow align-items-center">
@@ -51,7 +53,7 @@ const GameRoom = () => {
           ? <div className="panel playerPanel" onClick={handlePlayerPanelClick}>
               <h2>players</h2>
               <ul>
-                {players}
+                {players.map((player) => <li key={player}> {player} </li>)}
               </ul>
             </div>
           : <div className="panel playerPanel closed" onClick={handlePlayerPanelClick}></div>
@@ -71,7 +73,7 @@ const GameRoom = () => {
           {showChatPanel
           ? <div className="panel chatPanel" onClick={handleChatPanelClick}>
               <h2>chat</h2>
-              <Chat />
+              <Chat/>
             </div>
           : <div className="panel closed chatPanel" id="chatPanelClosed" onClick={handleChatPanelClick}></div>
           }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import Container from 'react-bootstrap/Container';
@@ -83,7 +83,7 @@ const WaitRoom = () => {
           <AccentButton onClick={handleStart}>start game</AccentButton>
           <h6>PLAYERS</h6>
           <div className="white">
-            {players.map((player,idx) => <div key={idx}> {player} </div>)}
+            {players.map((player) => <div key={player}> {player} </div>)}
           </div>
         </Col>
       </Row>

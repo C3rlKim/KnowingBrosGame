@@ -64,8 +64,8 @@ const CreateJoin = (props) => {
         history.push("/waitroom");
       }
       else if(status==="ingame"){
-        // By Pass user to the gameroom (have to implement)
-        history.push("/room/" + room + "/" + name);
+        // By Pass user to the gameroom
+        history.push("/gameroom");
       }
       setShowLoading(false);
     });
