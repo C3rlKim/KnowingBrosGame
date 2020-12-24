@@ -1,11 +1,12 @@
 import React from 'react';
 import Form from 'react-bootstrap/Form';
 import Alert from 'react-bootstrap/Alert';
+import Spinner from 'react-bootstrap/Spinner';
 import { Link } from 'react-router-dom';
 
 import AccentButton from './AccentButton';
 
-const CreateJoinForm = ({ name, room, option, handleChangeName, handleChangeRoom, handleSubmit, errorMess, setErrorMess })=> {
+const CreateJoinForm = ({ name, room, option, handleChangeName, handleChangeRoom, handleSubmit, errorMess, setErrorMess, showLoading })=> {
   const handleAlertClose = () => {
     setErrorMess("");
   }
@@ -25,7 +26,18 @@ const CreateJoinForm = ({ name, room, option, handleChangeName, handleChangeRoom
           <Form.Control value={name} onChange={handleChangeName} placeholder="Tommy Trojan">
           </Form.Control>
         </Form.Group>
-        <AccentButton type="submit">submit</AccentButton>
+        <AccentButton type="submit">
+          submit
+          {showLoading&&
+            <Spinner
+                as="span"
+                animation="border"
+                size="sm"
+                role="status"
+                aria-hidden="true"
+            />
+          }
+        </AccentButton>
         {
           errorMess &&
           <Alert variant="danger" onClose={handleAlertClose} dismissible>{errorMess}</Alert>

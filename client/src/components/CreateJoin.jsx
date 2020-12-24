@@ -12,11 +12,13 @@ import socket from '../socket';
 
 const CreateJoin = (props) => {
   const { option } = props;
+  const history = useHistory();
+
   const [room, setRoom] = useState("");
   const [name, setName] = useState("");
   const [spin, setSpin] = useState(false);
   const [errorMess, setErrorMess] = useState("");
-  const history = useHistory();
+  const [showLoading, setShowLoading] = useState(false);
 
   const handleChangeRoom = (e) => {
     setRoom(e.target.value);
@@ -35,17 +37,37 @@ const CreateJoin = (props) => {
       return;
     }
 
+    setShowLoading(true);
+    // TESTING Loader
+    /*
+    setTimeout(() => {
+      socket.emit("validation", { name, room, option }, (status, error) => {
+        if(status==="invalid"){
+          setErrorMess(error);
+        }
+        else if(status==="waitingroom"){
+          history.push("/waitroom");
+        }
+        else if(status==="ingame"){
+          // By Pass user to the gameroom (have to implement)
+          history.push("/room/" + room + "/" + name);
+        }
+        setShowLoading(false);
+      });
+    },3000);
+    */
     socket.emit("validation", { name, room, option }, (status, error) => {
       if(status==="invalid"){
         setErrorMess(error);
       }
       else if(status==="waitingroom"){
-        history.push("/waitroom/" + room + "/" + name);
+        history.push("/waitroom");
       }
       else if(status==="ingame"){
-        // By Pass user to the gameroom
+        // By Pass user to the gameroom (have to implement)
         history.push("/room/" + room + "/" + name);
       }
+      setShowLoading(false);
     });
   }
 
@@ -61,7 +83,7 @@ const CreateJoin = (props) => {
       }
     }
 
-  }, [spin])
+  }, [spin]);
 
   return (
     <Container fluid className="purple">
@@ -99,6 +121,7 @@ const CreateJoin = (props) => {
             handleSubmit={handleSubmit}
             errorMess={errorMess}
             setErrorMess={setErrorMess}
+            showLoading={showLoading}
           />
         </Col>
       </Row>

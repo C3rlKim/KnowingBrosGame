@@ -31,7 +31,7 @@ const Guess = (props) => {
     if (whichPlaying === 1) { setCount1(count1+1); }
     else if (whichPlaying === 5) { setCount5(count5+1); }
     else if (whichPlaying === 10) { setCount10(count10+1); }
-  }, [whichPlaying])
+  }, [whichPlaying]);
 
   useEffect(() => {
     let temp = 0;
@@ -40,7 +40,7 @@ const Guess = (props) => {
     if (count10 > 0) temp = 10;
     if (temp > 0) setPlaying(true);
     setMax(temp);
-  }, [count1, count5, count10])
+  }, [count1, count5, count10]);
 
   const handlePlay1sec = () => {
     setWhichPlaying(1);

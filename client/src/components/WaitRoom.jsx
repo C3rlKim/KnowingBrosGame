@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useParams, useHistory } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -10,30 +10,36 @@ import '../style/CreateJoinWait.scss';
 
 import socket from '../socket';
 
-const WaitingRoom = () => {
+const WaitRoom = () => {
+  const history = useHistory();
   const [players, setPlayers] = useState([]);
   const [spin, setSpin] = useState(false);
-  const history = useHistory();
-
-  let { roomname, username } = useParams();
 
   const handleCloudClick = (e) => {
     setSpin(true);
   }
+
+  const handleLeave = () => {
+    socket.emit("leaveGame");
+    history.push("/");
+  }
+
+  const handleStart = () => {
+    socket.emit("startClicked");
+  }
+
   // Even though the effect is only called once
   // the socket will be continue to listen
   useEffect( () => {
-    // Setting up an event listener before
-    // confirming to the server that there is a new user
     socket.on("playersInRoom",(updatedList) => {
       setPlayers(updatedList);
     });
-    socket.emit("newUserInWaitingRoom");
+    socket.emit("getPlayersInRoom");
 
     socket.on("startGame", () => {
-      history.push("/room/" + roomname + "/" + username);
+      history.push("/gameroom");
     });
-  }, [])
+  }, []);
 
   useEffect( () => {
     if (spin) {
@@ -43,15 +49,7 @@ const WaitingRoom = () => {
       }
     }
 
-  }, [spin])
-
-  const handleLeave = () => {
-    socket.emit("leaveGame");
-  }
-
-  const handleStart = () => {
-    socket.emit("startClicked", (roomname));
-  }
+  }, [spin]);
 
   return (
     <Container fluid className="purple">
@@ -81,12 +79,8 @@ const WaitingRoom = () => {
         <Col xs={12} md={6} lg={3} className="m-auto">
           <h1>waiting room</h1>
           <p className="white">host will start the game once all players have joined</p>
-          <Link to="/">
-            <AccentButton onClick={handleLeave}>leave game</AccentButton>
-          </Link>
-          <Link to={"/room/" + roomname + "/" + username}>
-            <AccentButton onClick={handleStart}>start game</AccentButton>
-          </Link>
+          <AccentButton onClick={handleLeave}>leave game</AccentButton>
+          <AccentButton onClick={handleStart}>start game</AccentButton>
           <h6>PLAYERS</h6>
           <div className="white">
             {players.map((player,idx) => <div key={idx}> {player} </div>)}
@@ -97,4 +91,4 @@ const WaitingRoom = () => {
   );
 }
 
-export default WaitingRoom;
+export default WaitRoom;
