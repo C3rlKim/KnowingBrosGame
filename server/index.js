@@ -12,9 +12,9 @@ const PORT = process.env.PORT || 5000;
 const {
   addUser, removeUser,
   roomExists, nameIsTaken,
-  getHost, getUsersInRoom,
+  getUsersInRoom, getUser,
   addToInGame,roomIsInGame,
-  getUser
+  randomizeOrder, initJudgeIdx, getJudge, updateJudge
 } = require('./roomAndUser.js');
 
 io.on("connect", socket => {
@@ -69,19 +69,38 @@ io.on("connect", socket => {
   });
 
   // Does not end socket connection, just exits from room
-  socket.on("leaveGame", () => {
+  socket.on("leaveGame", (callback) => {
     const user = getUser(socket.id);
     removeUser(user.name,user.room,socket.id);
+    // Possible async issue
     socket.leave(user.room);
     socket.to(user.room).emit("playersInRoom",getUsersInRoom(user.room));
+    callback();
   });
 
   // Starts the game when a user clicks start
   socket.on("startClicked", () => {
     const user = getUser(socket.id)
     addToInGame(user.room);
+    // Judge order initialization
+    randomizeOrder(user.room);
+    initJudgeIdx(user.room);
+
     io.in(user.room).emit("startGame");
   });
+
+  // Checks whether the client is the current judge
+  socket.on("checkIfJudge",(callback) => {
+    const user = getUser(socket.id);
+    //TESTING
+    if(user.name===getJudge(user.room)){
+      console.log(`${user.name} is the judge`);
+    }
+    else{
+      console.log(`${user.name} is the guesser`);
+    }
+    callback(user.name === getJudge(user.room));
+  })
 
   // Listen client's sendMessage and emits message to the room
   socket.on("sendMessage",(message, msgConfirm) => {
