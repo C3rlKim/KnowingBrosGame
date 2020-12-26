@@ -13,13 +13,17 @@ import socket from '../socket';
 const CreateJoin = (props) => {
   const { option } = props;
   const history = useHistory();
+  const [spin, setSpin] = useState(false);
 
   const [room, setRoom] = useState("");
   const [name, setName] = useState("");
-  const [spin, setSpin] = useState(false);
   const [errorMess, setErrorMess] = useState("");
   const [showLoading, setShowLoading] = useState(false);
 
+  const handleCloudClick = (e) => {
+    setSpin(true);
+  }
+  
   const handleChangeRoom = (e) => {
     setRoom(e.target.value);
   }
@@ -38,41 +42,19 @@ const CreateJoin = (props) => {
     }
 
     setShowLoading(true);
-    // TESTING Loader
-    /*
-    setTimeout(() => {
-      socket.emit("validation", { name, room, option }, (status, error) => {
-        if(status==="invalid"){
-          setErrorMess(error);
-        }
-        else if(status==="waitingroom"){
-          history.push("/waitroom");
-        }
-        else if(status==="ingame"){
-          // By Pass user to the gameroom (have to implement)
-          history.push("/room/" + room + "/" + name);
-        }
-        setShowLoading(false);
-      });
-    },3000);
-    */
     socket.emit("validation", { name, room, option }, (status, error) => {
       if(status==="invalid"){
         setErrorMess(error);
+        setShowLoading(false);
       }
       else if(status==="waitingroom"){
         history.push("/waitroom");
       }
       else if(status==="ingame"){
         // By Pass user to the gameroom
-        history.push("/gameroom");
+        history.push("/gameroom/");
       }
-      setShowLoading(false);
     });
-  }
-
-  const handleCloudClick = (e) => {
-    setSpin(true);
   }
 
   useEffect( () => {

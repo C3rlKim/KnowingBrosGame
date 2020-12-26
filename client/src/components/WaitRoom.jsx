@@ -6,22 +6,25 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import AccentButton from './AccentButton';
+
 import '../style/CreateJoinWait.scss';
 
 import socket from '../socket';
 
 const WaitRoom = () => {
   const history = useHistory();
-  const [players, setPlayers] = useState([]);
   const [spin, setSpin] = useState(false);
+
+  const [players, setPlayers] = useState([]);
 
   const handleCloudClick = (e) => {
     setSpin(true);
   }
 
   const handleLeave = () => {
-    socket.emit("leaveGame");
-    history.push("/");
+    socket.emit("leaveGame",() => {
+      history.push("/");
+    });
   }
 
   const handleStart = () => {

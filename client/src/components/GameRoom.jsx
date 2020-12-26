@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 
 import Container from 'react-bootstrap/Container';
@@ -17,12 +17,11 @@ import socket from '../socket'
 
 
 const GameRoom = () => {
-  let isJudge = true; //add logic to determine whether judge or guesser
-
   const [players, setPlayers] = useState([]);
   const [page, setPage] = useState("choose");
   const [showPlayerPanel, setShowPlayerPanel] = useState(true);
   const [showChatPanel, setShowChatPanel] = useState(true);
+  const [isJudge, setIsJudge] = useState();
 
   const handler = (newpage) => {
     setPage(newpage);
@@ -38,12 +37,17 @@ const GameRoom = () => {
     //setShowChatPanel((prev) => !prev);
   }
 
+  // have to figure out async issues with components not ready but being rendered
   useEffect(() => {
     socket.on("playersInRoom",(updatedList) => {
       setPlayers(updatedList);
     });
     socket.emit("getPlayersInRoom");
-  })
+
+    socket.emit("checkIfJudge",(isJudgeBool) => {
+      setIsJudge(isJudgeBool);
+    });
+  }, [])
 
   return (
     <Container fluid id="room" >
@@ -61,11 +65,11 @@ const GameRoom = () => {
         </Col>
 
         <Col xs={4} sm={6} xl={8} >
-          {page && handler &&
-            ((page==="choose" && <ChooseSong handler={handler}/>)
-            || (page==="wait" && <Wait isJudge={isJudge} handler={handler} />)
-            || (page==="guess" && <Guess handler={handler} />)
-            || (page==="results" && <Results handler={handler} />))
+          {
+                (page==="choose" && <ChooseSong handler={handler}/>)
+            ||  (page==="wait" && <Wait isJudge={isJudge} handler={handler} />)
+            ||  (page==="guess" && <Guess handler={handler} />)
+            ||  (page==="results" && <Results handler={handler} />)
           }
         </Col>
 
