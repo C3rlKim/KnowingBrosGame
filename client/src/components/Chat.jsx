@@ -24,13 +24,23 @@ const Chat = () => {
     //Listening to message from server
     socket.on("serverMessage", (msgObj) => {
       setMessages(prevMsgs => [...prevMsgs, msgObj]);
-    })
+    });
   }, [])
+
+  const messageGroup = messages.map((msgObj, idx) => {
+    return msgObj.audio ?
+    <div key={idx}>
+      <p>{msgObj.userName}:</p>
+      <audio controls src={msgObj.message} />
+    </div>
+    :
+    <p key={idx}>{msgObj.userName} : {msgObj.message}</p>
+  });
 
   return (
     <div>
       <ScrollToBottom>
-        {messages.map((msgObj, idx) => <p key={idx}>{msgObj.userName} : {msgObj.message}</p>)}
+        {messageGroup}
       </ScrollToBottom>
       <input type="text"
         value={input}
