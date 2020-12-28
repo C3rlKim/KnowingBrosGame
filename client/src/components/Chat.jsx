@@ -13,8 +13,8 @@ const Chat = () => {
     if(input==="") {
       return;
     }
-
-    socket.emit("sendMessage", input, () => {
+    
+    socket.emit("sendMessage", { input }, () => {
       // socket.io acknowledgement
       setInput("");
     });
@@ -28,7 +28,7 @@ const Chat = () => {
   }, [])
 
   const messageGroup = messages.map((msgObj, idx) => {
-    return msgObj.audio ?
+    return msgObj.isAudio ?
     <div key={idx}>
       <p>{msgObj.userName}:</p>
       <audio controls src={msgObj.message} />

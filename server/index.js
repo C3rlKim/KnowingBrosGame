@@ -103,16 +103,18 @@ io.on("connect", socket => {
   })
 
   // Listen client's sendMessage and emits message to the room
-  socket.on("sendMessage",(message, msgConfirm) => {
+  socket.on("sendMessage",({ input, mediaBlobUrl }, msgConfirm) => {
     const user = getUser(socket.id);
-    io.in(user.room).emit("serverMessage", { message, userName: user.name, audio: false });
-    msgConfirm();
-  });
-
-  // Listen client's sendAudioMessage and emits message to the room
-  socket.on("sendAudioMessage",(message, msgConfirm) => {
-    const user = getUser(socket.id);
-    io.in(user.room).emit("serverMessage", { message, userName: user.name, audio: true });
+    let message, isAudio;
+    if (input) {
+      message = input;
+      isAudio = false;
+    }
+    else {
+      message = mediaBlobUrl;
+      isAudio = true;
+    }
+    io.in(user.room).emit("serverMessage", { message, userName: user.name, isAudio });
     msgConfirm();
   });
 
