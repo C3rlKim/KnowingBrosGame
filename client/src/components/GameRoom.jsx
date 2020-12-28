@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -9,6 +8,7 @@ import Results from './Results';
 import ChooseSong from './ChooseSong';
 import Guess from './Guess';
 import Wait from './Wait';
+import HintOptions from './HintOptions';
 import Chat from './Chat';
 
 import '../style/GameRoom.scss';
@@ -18,7 +18,7 @@ import socket from '../socket'
 
 const GameRoom = () => {
   const [players, setPlayers] = useState([]);
-  const [page, setPage] = useState("choose");
+  const [page, setPage] = useState("hint");
   const [showPlayerPanel, setShowPlayerPanel] = useState(true);
   const [showChatPanel, setShowChatPanel] = useState(true);
   const [isJudge, setIsJudge] = useState();
@@ -68,8 +68,8 @@ const GameRoom = () => {
           {
                 (page==="choose" && <ChooseSong handler={handler}/>)
             ||  (page==="wait" && <Wait isJudge={isJudge} handler={handler} />)
-            ||  (page==="guess" && <Guess handler={handler} />)
             ||  (page==="results" && <Results handler={handler} />)
+            ||  (page==="hint" && <HintOptions handler={handler} />)
           }
         </Col>
 

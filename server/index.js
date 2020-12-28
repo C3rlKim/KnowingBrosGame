@@ -105,7 +105,14 @@ io.on("connect", socket => {
   // Listen client's sendMessage and emits message to the room
   socket.on("sendMessage",(message, msgConfirm) => {
     const user = getUser(socket.id);
-    io.in(user.room).emit("serverMessage", { message, userName: user.name });
+    io.in(user.room).emit("serverMessage", { message, userName: user.name, audio: false });
+    msgConfirm();
+  });
+
+  // Listen client's sendAudioMessage and emits message to the room
+  socket.on("sendAudioMessage",(message, msgConfirm) => {
+    const user = getUser(socket.id);
+    io.in(user.room).emit("serverMessage", { message, userName: user.name, audio: true });
     msgConfirm();
   });
 
