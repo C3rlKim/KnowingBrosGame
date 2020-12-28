@@ -6,6 +6,8 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import MainButton from './MainButton';
+import RecordButton from '../images/record.svg';
+import StopButton from '../images/stop.svg';
 
 import socket from '../socket';
 
@@ -30,7 +32,7 @@ const HintOptions = () => {
   const handleSend = () => {
     if (mediaBlobUrl) {
       //emit in chat
-      socket.emit("sendAudioMessage", mediaBlobUrl, () => {
+      socket.emit("sendMessage", { mediaBlobUrl }, () => {
         // socket.io acknowledgement
         //clear recording error
       });
@@ -40,7 +42,7 @@ const HintOptions = () => {
   return(
     <Container fluid>
       <h1>Send a hint</h1>
-      
+
       <Row>
         <Col xs={12} lg={4} className="hint">
           <h3>Play a short snippet</h3>
@@ -63,8 +65,8 @@ const HintOptions = () => {
 
         <Col xs={12} lg={4} className="hint">
           <h3>Send a voice message to the chat</h3>
-          <button onClick={startRecording}>start</button>
-          <button onClick={stopRecording}>stop</button>
+          <input type="image" onClick={startRecording} src={RecordButton} alt="start recording button" />
+          <input type="image" onClick={stopRecording} src={StopButton} alt="stop recording button" />
           <audio src={mediaBlobUrl} controls />
           <button onClick={handleSend}>send</button>
           { error && <p>{error}</p> }
