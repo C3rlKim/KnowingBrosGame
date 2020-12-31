@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Alert from 'react-bootstrap/Alert';
 
 import AccentButton from './AccentButton';
 
@@ -16,6 +17,7 @@ const WaitRoom = () => {
   const [spin, setSpin] = useState(false);
 
   const [players, setPlayers] = useState([]);
+  const [errorMess, setErrorMess] = useState("");
 
   const handleCloudClick = (e) => {
     setSpin(true);
@@ -28,7 +30,15 @@ const WaitRoom = () => {
   }
 
   const handleStart = () => {
+    if(players.length < 2){
+      setErrorMess("Need at least 2 people to play");
+      return;
+    }
     socket.emit("startClicked");
+  }
+
+  const handleAlertClose = () => {
+    setErrorMess("");
   }
 
   // Even though the effect is only called once
@@ -84,6 +94,9 @@ const WaitRoom = () => {
           <p className="white">host will start the game once all players have joined</p>
           <AccentButton onClick={handleLeave}>leave game</AccentButton>
           <AccentButton onClick={handleStart}>start game</AccentButton>
+          {errorMess &&
+            <Alert variant="danger" onClose={handleAlertClose} dismissible>{errorMess}</Alert>
+          }
           <h6>PLAYERS</h6>
           <div className="white">
             {players.map((player) => <div key={player}> {player} </div>)}

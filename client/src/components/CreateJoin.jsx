@@ -18,12 +18,11 @@ const CreateJoin = (props) => {
   const [room, setRoom] = useState("");
   const [name, setName] = useState("");
   const [errorMess, setErrorMess] = useState("");
-  const [showLoading, setShowLoading] = useState(false);
 
   const handleCloudClick = (e) => {
     setSpin(true);
   }
-  
+
   const handleChangeRoom = (e) => {
     setRoom(e.target.value);
   }
@@ -41,11 +40,9 @@ const CreateJoin = (props) => {
       return;
     }
 
-    setShowLoading(true);
     socket.emit("validation", { name, room, option }, (status, error) => {
       if(status==="invalid"){
         setErrorMess(error);
-        setShowLoading(false);
       }
       else if(status==="waitingroom"){
         history.push("/waitroom");
@@ -103,7 +100,6 @@ const CreateJoin = (props) => {
             handleSubmit={handleSubmit}
             errorMess={errorMess}
             setErrorMess={setErrorMess}
-            showLoading={showLoading}
           />
         </Col>
       </Row>

@@ -6,7 +6,7 @@ import ReactPlayer from 'react-player';
 import MainButton from './MainButton';
 
 const Choose = (props) => {
-  const { handler } = props;
+  const { handlePageChange } = props;
   const [titles, setTitles] = useState(null);
   const [value, setValue] = useState("choose a song");
 
@@ -42,7 +42,8 @@ const Choose = (props) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     //send value to guessers
-    handler("wait");
+    //and initiate the ui change of guessers by calling the server
+    handlePageChange("hint");
   }
 
   return (
@@ -52,17 +53,14 @@ const Choose = (props) => {
 
       <Form onSubmit={handleSubmit}>
         <MainButton type="submit">submit</MainButton>
-        <Link to={{pathname: "/"}}>
-          <MainButton>leave game</MainButton>
-        </Link>
-        
+
         <Form.Label className="formLabel">
           SONG SELECTION
         </Form.Label>
         <Form.Control className="formDropdown" as="select" value={value} onChange={handleChange}>
           {titles}
         </Form.Control>
-        
+
         <Form.Label className="formLabel">
           SONG PLAYER
         </Form.Label>

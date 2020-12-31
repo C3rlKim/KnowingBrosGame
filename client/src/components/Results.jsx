@@ -27,8 +27,8 @@ const playerAnswers = hardcodedResponses.map((response) => {
 });
 
 const Results = (props) => {
-  const {handler} = props;
-  
+  const {handlePageChange} = props;
+
   return (
     <div>
       <h1>{answer}</h1>

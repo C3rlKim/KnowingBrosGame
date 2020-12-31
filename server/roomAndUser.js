@@ -5,6 +5,7 @@ const roomToUsersArray = {};
 const inGameRooms = new Set();
 const idToUser = {};
 const roomToJudgeIdx = {};
+const roomToRound = {}
 
 // Addition and removal of user functions
 const addUser = (name, room, id) => {
@@ -18,7 +19,6 @@ const addUser = (name, room, id) => {
 }
 const removeUser = (name, room, id) => {
   roomToUsersSet[room].delete(name);
-  // Should figure out a better data structure to efficiently handle
   const nameIdx = roomToUsersArray[room].indexOf(name);
   roomToUsersArray[room].splice(nameIdx,1);
   delete idToUser.id;
@@ -28,7 +28,7 @@ const removeUser = (name, room, id) => {
 const roomExists = (room) => room in roomToUsersSet
 const nameIsTaken = (name, room) => roomToUsersSet[room].has(name)
 
-// get User and UsersInRoom functions
+// get user(s) functions
 const getUsersInRoom = (room) => roomToUsersArray[room]
 const getUser = (id) => idToUser[id]
 
@@ -50,11 +50,18 @@ const updateJudge = (room) => {
   judgeIdx = (judgeIdx + 1) % roomToUsersArray[room].length;
 }
 
+// Round functions
+const initRound = (room) => {
+  // For now make the round length the number of users in room
+  roomToRound[room] = getUsersInRoom(room).length
+}
+
 // Concept of Closure
 module.exports = {
   addUser, removeUser,
   roomExists, nameIsTaken,
   getUsersInRoom, getUser,
   addToInGame,roomIsInGame,
-  randomizeOrder, initJudgeIdx, getJudge, updateJudge
+  randomizeOrder, initJudgeIdx, getJudge, updateJudge,
+  initRound
 };
