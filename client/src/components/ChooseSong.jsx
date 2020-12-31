@@ -5,6 +5,8 @@ import Form from 'react-bootstrap/Form';
 import ReactPlayer from 'react-player';
 import MainButton from './MainButton';
 
+import socket from '../socket';
+
 const Choose = (props) => {
   const { handlePageChange } = props;
   const [titles, setTitles] = useState(null);
@@ -41,9 +43,10 @@ const Choose = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    //send value to guessers
-    //and initiate the ui change of guessers by calling the server
-    handlePageChange("hint");
+
+    socket.emit("songSelected", value, () => {
+      handlePageChange("hint");
+    });
   }
 
   return (

@@ -6,6 +6,7 @@ const inGameRooms = new Set();
 const idToUser = {};
 const roomToJudgeIdx = {};
 const roomToRound = {}
+const roomToSong = {}
 
 // Addition and removal of user functions
 const addUser = (name, room, id) => {
@@ -56,6 +57,11 @@ const initRound = (room) => {
   roomToRound[room] = getUsersInRoom(room).length
 }
 
+// Song functions
+const updateSongToGuess = (room, song) => {
+  roomToSong[room] = song;
+}
+
 // Concept of Closure
 module.exports = {
   addUser, removeUser,
@@ -63,5 +69,6 @@ module.exports = {
   getUsersInRoom, getUser,
   addToInGame,roomIsInGame,
   randomizeOrder, initJudgeIdx, getJudge, updateJudge,
-  initRound
+  initRound,
+  updateSongToGuess
 };

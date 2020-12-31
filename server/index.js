@@ -15,7 +15,8 @@ const {
   getUsersInRoom, getUser,
   addToInGame,roomIsInGame,
   randomizeOrder, initJudgeIdx, getJudge, updateJudge,
-  initRound
+  initRound,
+  updateSongToGuess
 } = require('./roomAndUser.js');
 
 io.on("connect", socket => {
@@ -88,17 +89,8 @@ io.on("connect", socket => {
     initJudgeIdx(user.room);
     // Round initialization
     initRound(user.room);
-    
-    io.in(user.room).emit("startGame");
 
-    // TESTING TIMER
-    let time = 60;
-    const timeInterval =  setInterval(()=> {
-      if(time === 0){
-        clearInterval(timeInterval);
-      }
-      io.in(user.room).emit("timer",time--);
-    }, 1000)
+    io.in(user.room).emit("startGame");
   });
 
   // Checks whether the client is the current judge
@@ -112,6 +104,22 @@ io.on("connect", socket => {
       console.log(`${user.name} is the guesser`);
     }
     callback(user.name === getJudge(user.room));
+  })
+
+  // Stores the song selected by judge and change ui for guesser
+  socket.on("songSelected",(song, judgeToHintUI) => {
+    const user = getUser(socket.id);
+    updateSongToGuess(user.room,song);
+    socket.to(user.room).emit("startGuessing");
+    judgeToHintUI();
+    // TESTING TIMER
+    let time = 60;
+    const timeInterval =  setInterval(()=> {
+      if(time === 0){
+        clearInterval(timeInterval);
+      }
+      io.in(user.room).emit("timer",time--);
+    }, 1000)
   })
 
   // Listen client's sendMessage and emits message to the room
