@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Spinner from 'react-bootstrap/Spinner';
 
 import Results from './Results';
 import ChooseSong from './ChooseSong';
@@ -18,12 +19,16 @@ import socket from '../socket'
 
 const GameRoom = () => {
   const [players, setPlayers] = useState([]);
-  const [page, setPage] = useState("hint");
+  const [page, setPage] = useState("choose");
   const [showPlayerPanel, setShowPlayerPanel] = useState(true);
   const [showChatPanel, setShowChatPanel] = useState(true);
   const [isJudge, setIsJudge] = useState();
+  const [renderReady, setRenderReady] = useState(false);
+  // TESTING TIMER
+  const [gameTimer, setGameTimer] = useState("");
 
-  const handler = (newpage) => {
+
+  const handlePageChange = (newpage) => {
     setPage(newpage);
   }
 
@@ -37,7 +42,6 @@ const GameRoom = () => {
     //setShowChatPanel((prev) => !prev);
   }
 
-  // have to figure out async issues with components not ready but being rendered
   useEffect(() => {
     socket.on("playersInRoom",(updatedList) => {
       setPlayers(updatedList);
@@ -46,43 +50,67 @@ const GameRoom = () => {
 
     socket.emit("checkIfJudge",(isJudgeBool) => {
       setIsJudge(isJudgeBool);
+      setRenderReady(true);
+      // If the client is a guesser make the client wait for
+      // the judge to choose the song
+      if(!isJudgeBool) {
+        setPage("wait");
+      }
+    });
+
+    // TESTING TIMER
+    socket.on("timer", (serverTimer) => {
+      setGameTimer(serverTimer);
     });
   }, [])
 
+  const loader = (
+    <div>
+      <Spinner animation="grow"/>
+    </div>
+  )
+  const component = (
+    <Row className="roomRow align-items-center">
+      <Col xs={4} sm={3} xl={2} className="roomCol">
+        {gameTimer}
+        {showPlayerPanel
+        ? <div className="panel playerPanel" onClick={handlePlayerPanelClick}>
+            <h2>players</h2>
+            <ul>
+              {players.map((player) => <li key={player}> {player} </li>)}
+            </ul>
+          </div>
+        : <div className="panel playerPanel closed" onClick={handlePlayerPanelClick}></div>
+        }
+      </Col>
+
+      <Col xs={4} sm={6} xl={8} >
+        {
+              (page==="choose" && <ChooseSong handlePageChange={handlePageChange}/>)
+          ||  (page==="wait" && <Wait handlePageChange={handlePageChange} />)
+          ||  (page==="hint" && <HintOptions handlePageChange={handlePageChange} />)
+          ||  (page==="results" && <Results handlePageChange={handlePageChange} />)
+        }
+      </Col>
+
+      <Col xs={4} sm={3} xl={2} className="roomCol">
+        {showChatPanel
+        ? <div className="panel chatPanel" onClick={handleChatPanelClick}>
+            <h2>chat</h2>
+            <Chat/>
+          </div>
+        : <div className="panel closed chatPanel" id="chatPanelClosed" onClick={handleChatPanelClick}></div>
+        }
+      </Col>
+    </Row>
+  )
+
   return (
     <Container fluid id="room" >
-      <Row className="roomRow align-items-center">
-        <Col xs={4} sm={3} xl={2} className="roomCol">
-          {showPlayerPanel
-          ? <div className="panel playerPanel" onClick={handlePlayerPanelClick}>
-              <h2>players</h2>
-              <ul>
-                {players.map((player) => <li key={player}> {player} </li>)}
-              </ul>
-            </div>
-          : <div className="panel playerPanel closed" onClick={handlePlayerPanelClick}></div>
-          }
-        </Col>
-
-        <Col xs={4} sm={6} xl={8} >
-          {
-                (page==="choose" && <ChooseSong handler={handler}/>)
-            ||  (page==="wait" && <Wait isJudge={isJudge} handler={handler} />)
-            ||  (page==="results" && <Results handler={handler} />)
-            ||  (page==="hint" && <HintOptions handler={handler} />)
-          }
-        </Col>
-
-        <Col xs={4} sm={3} xl={2} className="roomCol">
-          {showChatPanel
-          ? <div className="panel chatPanel" onClick={handleChatPanelClick}>
-              <h2>chat</h2>
-              <Chat/>
-            </div>
-          : <div className="panel closed chatPanel" id="chatPanelClosed" onClick={handleChatPanelClick}></div>
-          }
-        </Col>
-      </Row>
+      {renderReady
+      ? component
+      : loader
+      }
     </Container>
   );
 }

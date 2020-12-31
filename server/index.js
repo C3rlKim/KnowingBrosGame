@@ -14,7 +14,8 @@ const {
   roomExists, nameIsTaken,
   getUsersInRoom, getUser,
   addToInGame,roomIsInGame,
-  randomizeOrder, initJudgeIdx, getJudge, updateJudge
+  randomizeOrder, initJudgeIdx, getJudge, updateJudge,
+  initRound
 } = require('./roomAndUser.js');
 
 io.on("connect", socket => {
@@ -72,10 +73,10 @@ io.on("connect", socket => {
   socket.on("leaveGame", (callback) => {
     const user = getUser(socket.id);
     removeUser(user.name,user.room,socket.id);
-    // Possible async issue
-    socket.leave(user.room);
-    socket.to(user.room).emit("playersInRoom",getUsersInRoom(user.room));
-    callback();
+    socket.leave(user.room, () => {
+      socket.to(user.room).emit("playersInRoom",getUsersInRoom(user.room));
+      callback();
+    });
   });
 
   // Starts the game when a user clicks start
@@ -85,8 +86,19 @@ io.on("connect", socket => {
     // Judge order initialization
     randomizeOrder(user.room);
     initJudgeIdx(user.room);
-
+    // Round initialization
+    initRound(user.room);
+    
     io.in(user.room).emit("startGame");
+
+    // TESTING TIMER
+    let time = 60;
+    const timeInterval =  setInterval(()=> {
+      if(time === 0){
+        clearInterval(timeInterval);
+      }
+      io.in(user.room).emit("timer",time--);
+    }, 1000)
   });
 
   // Checks whether the client is the current judge
