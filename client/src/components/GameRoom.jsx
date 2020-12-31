@@ -89,6 +89,7 @@ const GameRoom = () => {
               (page==="choose" && <ChooseSong handlePageChange={handlePageChange}/>)
           ||  (page==="wait" && <Wait handlePageChange={handlePageChange} />)
           ||  (page==="hint" && <HintOptions handlePageChange={handlePageChange} />)
+          ||  (page==="guess" && <Guess handlePageChange={handlePageChange} />)
           ||  (page==="results" && <Results handlePageChange={handlePageChange} />)
         }
       </Col>
