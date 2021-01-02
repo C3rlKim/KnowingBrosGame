@@ -10,23 +10,21 @@ import socket from '../socket';
 const Choose = (props) => {
   const { handlePageChange } = props;
   const [titles, setTitles] = useState(null);
-  const [value, setValue] = useState("choose a song");
+  const [value, setValue] = useState();
 
   useEffect(() => {
     async function getPlaylist() {
       try {
         const response = await fetch(
-          //"https://api.soundcloud.com/playlists/1152826654?client_id=d02c42795f3bcac39f84eee0ae384b00"
+          "https://api.soundcloud.com/playlists/1152826654?client_id=d02c42795f3bcac39f84eee0ae384b00"
           //keep playlist short for now
-          "https://api.soundcloud.com/playlists/405726?client_id=d02c42795f3bcac39f84eee0ae384b00"
+          //"https://api.soundcloud.com/playlists/405726?client_id=d02c42795f3bcac39f84eee0ae384b00"
         );
 
         const json = await response.json();
-
-        let id = 0;
-        setTitles(json.tracks.map((track) => {
+        setTitles(json.tracks.map((track,idx) => {
           return (
-            <option key={id++}>{track.title}</option>
+            <option key={idx}>{track.title}</option>
           );
         }));
       } catch (error) {
@@ -41,9 +39,9 @@ const Choose = (props) => {
     setValue(e.target.value);
   }
 
+
   const handleSubmit = (e) => {
     e.preventDefault();
-
     socket.emit("songSelected", value, () => {
       handlePageChange("hint");
     });

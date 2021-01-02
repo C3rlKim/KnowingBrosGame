@@ -16,7 +16,8 @@ const {
   addToInGame,roomIsInGame,
   randomizeOrder, initJudgeIdx, getJudge, updateJudge,
   initRound,
-  updateSongToGuess
+  updateSongToGuess,
+  initTime, getTime, updateTime
 } = require('./roomAndUser.js');
 
 io.on("connect", socket => {
@@ -26,36 +27,36 @@ io.on("connect", socket => {
   // and handles creating room and joining
   socket.on("validation", ({ name, room, option }, callback) => {
     if(option === "create") {
-      if(!roomExists(room)){
-        // server in memory data store
-        addUser(name, room, socket.id);
-        // socket.io library data store
-        socket.join(room);
-        if(roomIsInGame(room)){
-          callback("ingame");
+      if(!roomExists(room)) {
+        if(roomIsInGame(room)) {
+          callback("invalid", `The room "${room}" is already in session`);
         }
-        else{
+        else {
+          // server in memory data store
+          addUser(name, room, socket.id);
+          // socket.io library data store
+          socket.join(room);
           callback("waitingroom");
         }
       }
-      else{
+      else {
         callback("invalid",`The room name "${room}" is already being used`);
       }
     }
-    else {
-      if(roomExists(room)){
-        if(!nameIsTaken(name, room)){
-          addUser(name, room, socket.id);
-          socket.join(room);
-          if(roomIsInGame(room)){
-            callback("ingame")
-          }
-          else{
+    else if (option === "join") {
+      if(roomExists(room)) {
+        if(roomIsInGame(room)) {
+          callback("invalid", `The room "${room}" is already in session`);
+        }
+        else {
+          if(!nameIsTaken(name,room)) {
+            addUser(name, room, socket.id);
+            socket.join(room);
             callback("waitingroom");
           }
-        }
-        else{
-          callback("invalid",`The username "${name}" is already being used`);
+          else {
+            callback("invalid",`The username "${name}" is already being used`);
+          }
         }
       }
       else{
@@ -106,19 +107,24 @@ io.on("connect", socket => {
     callback(user.name === getJudge(user.room));
   })
 
-  // Stores the song selected by judge and change ui for guesser
+  // Stores the song selected and allow judge to send hint
   socket.on("songSelected",(song, judgeToHintUI) => {
     const user = getUser(socket.id);
     updateSongToGuess(user.room,song);
+
+    // Advance Judge and Guessers UI (talked to kelley)
     socket.to(user.room).emit("startGuessing");
     judgeToHintUI();
-    // TESTING TIMER
-    let time = 60;
+
+    // Timer
+    initTime(user.room);
     const timeInterval =  setInterval(()=> {
-      if(time === 0){
+      if(getTime(user.room) === 0){
         clearInterval(timeInterval);
+        // add logic of end of round
       }
-      io.in(user.room).emit("timer",time--);
+      updateTime(user.room);
+      io.in(user.room).emit("timer",getTime(user.room));
     }, 1000)
   })
 

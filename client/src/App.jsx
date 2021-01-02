@@ -6,6 +6,8 @@ import CreateJoin from './components/CreateJoin';
 import WaitRoom from './components/WaitRoom';
 import Room from './components/GameRoom';
 import Chat from './components/Chat';
+//TESTING\
+import Guess from './components/Guess';
 
 const App = () => (
   <Router>
@@ -23,6 +25,9 @@ const App = () => (
     </Route>
     <Route path="/gameroom">
       <Room/>
+    </Route>
+    <Route path="/guess">
+      <Guess/>
     </Route>
   </Router>
 );

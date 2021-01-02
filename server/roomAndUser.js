@@ -5,8 +5,9 @@ const roomToUsersArray = {};
 const inGameRooms = new Set();
 const idToUser = {};
 const roomToJudgeIdx = {};
-const roomToRound = {}
-const roomToSong = {}
+const roomToRound = {};
+const roomToSong = {};
+const roomToTime = {};
 
 // Addition and removal of user functions
 const addUser = (name, room, id) => {
@@ -62,6 +63,11 @@ const updateSongToGuess = (room, song) => {
   roomToSong[room] = song;
 }
 
+// Time functions
+const initTime = (room) => roomToTime[room] = 60;
+const getTime = (room) => roomToTime[room];
+const updateTime = (room) => roomToTime[room] -= 1;
+
 // Concept of Closure
 module.exports = {
   addUser, removeUser,
@@ -70,5 +76,6 @@ module.exports = {
   addToInGame,roomIsInGame,
   randomizeOrder, initJudgeIdx, getJudge, updateJudge,
   initRound,
-  updateSongToGuess
+  updateSongToGuess,
+  initTime, getTime, updateTime
 };
