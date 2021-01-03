@@ -6,25 +6,32 @@ const inGameRooms = new Set();
 const idToUser = {};
 const roomToJudgeIdx = {};
 const roomToRound = {};
-const roomToSong = {};
+const roomToTrackNum = {};
+const roomToAnswer = {}
 const roomToTime = {};
 const roomToGameStatus = {};
+const roomToUserToPoints = {};
+const roomToNumOfCorrect = {};
+
 
 // Addition and removal of user functions
 const addUser = (name, room, id) => {
   if(!roomExists(room)) {
     roomToUsersSet[room] = new Set();
     roomToUsersArray[room] = [];
+    roomToUserToPoints[room] = {};
   }
   roomToUsersSet[room].add(name);
   roomToUsersArray[room].push(name);
+  roomToUserToPoints[room][name] = 0;
   idToUser[id] = { name, room };
 }
 const removeUser = (name, room, id) => {
   roomToUsersSet[room].delete(name);
   const nameIdx = roomToUsersArray[room].indexOf(name);
   roomToUsersArray[room].splice(nameIdx,1);
-  delete idToUser.id;
+  delete roomToUserToPoints[room][name];
+  delete idToUser[id];
 }
 
 // Validation functions
@@ -35,7 +42,7 @@ const nameIsTaken = (name, room) => roomToUsersSet[room].has(name)
 const getUsersInRoom = (room) => roomToUsersArray[room]
 const getUser = (id) => idToUser[id]
 
-// InGame Check functions
+// In game Check functions
 const addToInGame = (room) => inGameRooms.add(room)
 const roomIsInGame = (room) => inGameRooms.has(room)
 
@@ -59,10 +66,12 @@ const initRound = (room) => {
   roomToRound[room] = getUsersInRoom(room).length
 }
 
-// Song functions
-const updateSongToGuess = (room, song) => {
-  roomToSong[room] = song;
-}
+// TrackNum and Answer functions
+const getTrackNum = (room) => roomToTrackNum[room]
+const getAnswer = (room) => roomToAnswer[room]
+const updateTrackNum = (room, trackNum) => roomToTrackNum[room] = trackNum;
+const updateAnswer = (room, answer) => roomToAnswer[room] = answer;
+
 
 // Time functions
 const initTime = (room) => roomToTime[room] = 60;
@@ -74,7 +83,12 @@ const initGameStatus = (room) => roomToGameStatus[room] = "songSelection";
 const getGameStatus = (room) => roomToGameStatus[room];
 const updateGameStatus = (room, status) => roomToGameStatus[room] = status;
 
-// Concept of Closure
+// Point functions
+const initNumOfCorrect = (room) => roomToNumOfCorrect[room] = 0
+const updatePoints = (name, room, points) => roomToUserToPoints[room][name] += points
+//Testing
+const getPoints = (name, room) => roomToUserToPoints[room][name]
+
 module.exports = {
   addUser, removeUser,
   roomExists, nameIsTaken,
@@ -82,7 +96,9 @@ module.exports = {
   addToInGame,roomIsInGame,
   initJudge, getJudge, updateJudge,
   initRound,
-  updateSongToGuess,
+  getTrackNum, getAnswer,
+  updateTrackNum, updateAnswer,
   initTime, getTime, updateTime,
-  initGameStatus, getGameStatus, updateGameStatus
+  initGameStatus, getGameStatus, updateGameStatus,
+  initNumOfCorrect, updatePoints, getPoints
 };

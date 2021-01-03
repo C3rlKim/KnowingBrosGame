@@ -16,9 +16,11 @@ const {
   addToInGame,roomIsInGame,
   initJudge, getJudge, updateJudge,
   initRound,
-  updateSongToGuess,
+  getTrackNum, getAnswer,
+  updateTrackNum, updateAnswer,
   initTime, getTime, updateTime,
-  initGameStatus, getGameStatus, updateGameStatus
+  initGameStatus, getGameStatus, updateGameStatus,
+  initNumOfCorrect, updatePoints, getPoints
 } = require('./roomAndUser.js');
 
 io.on("connect", socket => {
@@ -71,10 +73,10 @@ io.on("connect", socket => {
   socket.on("leaveGame", (callback) => {
     const user = getUser(socket.id);
     removeUser(user.name,user.room,socket.id);
-    socket.leave(user.room, () => {
-      socket.to(user.room).emit("playersInRoom",getUsersInRoom(user.room));
-      callback();
-    });
+    // async issue
+    socket.leave(user.room);
+    callback();
+    io.in(user.room).emit("playersInRoom",getUsersInRoom(user.room));
   });
 
   // Starts the game when a user clicks start
@@ -89,6 +91,7 @@ io.on("connect", socket => {
     initJudge(user.room);
     initRound(user.room);
     initGameStatus(user.room);
+    initNumOfCorrect(user.room);
 
     io.in(user.room).emit("startGame");
   });
@@ -122,11 +125,13 @@ io.on("connect", socket => {
   })
 
   // Stores the song selected and advance UI
-  socket.on("songSelected",(song, judgeToHintUI) => {
+  socket.on("songSelected",(trackNum, answer, judgeToHintUI) => {
     const user = getUser(socket.id);
-    updateSongToGuess(user.room,song);
+    updateTrackNum(user.room, trackNum);
+    updateAnswer(user.room, answer);
+    console.log(`The answer for ${user.room} is ${getAnswer(user.room)}`);
 
-    // async issues
+    // async issues (talk to kelley)
     updateGameStatus(user.room, "guessSong");
     socket.to(user.room).emit("startGuessing");
     judgeToHintUI();
@@ -155,6 +160,20 @@ io.on("connect", socket => {
       message = mediaBlobUrl;
       isAudio = true;
     }
+
+    // check if answer(talk to kelley)
+    if(!isAudio) {
+      if(getAnswer(user.room)) {
+        if(message === getAnswer(user.room)) {
+          // arbitrary points for now
+          let points = 12;
+          updatePoints(user.name,user.room, points);
+
+          console.log(`${user.name} obtained ${getPoints(user.name,user.room)} points!`);
+        }
+      }
+    }
+
     io.in(user.room).emit("serverMessage", { message, userName: user.name, isAudio });
     msgConfirm();
   });
