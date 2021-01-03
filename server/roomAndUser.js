@@ -8,6 +8,7 @@ const roomToJudgeIdx = {};
 const roomToRound = {};
 const roomToSong = {};
 const roomToTime = {};
+const roomToGameStatus = {};
 
 // Addition and removal of user functions
 const addUser = (name, room, id) => {
@@ -38,11 +39,11 @@ const getUser = (id) => idToUser[id]
 const addToInGame = (room) => inGameRooms.add(room)
 const roomIsInGame = (room) => inGameRooms.has(room)
 
-// Judge Identification functions
-const randomizeOrder = (room) => {
+// Judge functions
+const initJudge = (room) => {
   roomToUsersArray[room] = _.shuffle(roomToUsersArray[room]);
+  roomToJudgeIdx[room] = 0;
 }
-const initJudgeIdx = (room) => roomToJudgeIdx[room] = 0;
 const getJudge = (room) => {
   const judgeIdx = roomToJudgeIdx[room];
   return roomToUsersArray[room][judgeIdx];
@@ -68,14 +69,20 @@ const initTime = (room) => roomToTime[room] = 60;
 const getTime = (room) => roomToTime[room];
 const updateTime = (room) => roomToTime[room] -= 1;
 
+// Game status functions
+const initGameStatus = (room) => roomToGameStatus[room] = "songSelection";
+const getGameStatus = (room) => roomToGameStatus[room];
+const updateGameStatus = (room, status) => roomToGameStatus[room] = status;
+
 // Concept of Closure
 module.exports = {
   addUser, removeUser,
   roomExists, nameIsTaken,
   getUsersInRoom, getUser,
   addToInGame,roomIsInGame,
-  randomizeOrder, initJudgeIdx, getJudge, updateJudge,
+  initJudge, getJudge, updateJudge,
   initRound,
   updateSongToGuess,
-  initTime, getTime, updateTime
+  initTime, getTime, updateTime,
+  initGameStatus, getGameStatus, updateGameStatus
 };

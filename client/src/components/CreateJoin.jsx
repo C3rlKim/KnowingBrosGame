@@ -35,17 +35,20 @@ const CreateJoin = (props) => {
     e.preventDefault();
 
     // Validation of empty room name and your name
-    if(!room || !name){
+    if(!room || !name) {
       setErrorMess("Fill in both room name and your name!");
       return;
     }
 
     socket.emit("validation", { name, room, option }, (status, error) => {
-      if(status==="invalid"){
+      if(status==="invalid") {
         setErrorMess(error);
       }
-      else if(status==="waitingroom"){
+      else if(status==="waitroom") {
         history.push("/waitroom");
+      }
+      else if (status==="gameroom") {
+        history.push("/gameroom");
       }
     });
   }

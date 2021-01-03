@@ -14,10 +14,11 @@ const {
   roomExists, nameIsTaken,
   getUsersInRoom, getUser,
   addToInGame,roomIsInGame,
-  randomizeOrder, initJudgeIdx, getJudge, updateJudge,
+  initJudge, getJudge, updateJudge,
   initRound,
   updateSongToGuess,
-  initTime, getTime, updateTime
+  initTime, getTime, updateTime,
+  initGameStatus, getGameStatus, updateGameStatus
 } = require('./roomAndUser.js');
 
 io.on("connect", socket => {
@@ -28,16 +29,11 @@ io.on("connect", socket => {
   socket.on("validation", ({ name, room, option }, callback) => {
     if(option === "create") {
       if(!roomExists(room)) {
-        if(roomIsInGame(room)) {
-          callback("invalid", `The room "${room}" is already in session`);
-        }
-        else {
-          // server in memory data store
-          addUser(name, room, socket.id);
-          // socket.io library data store
-          socket.join(room);
-          callback("waitingroom");
-        }
+        // server in memory data store
+        addUser(name, room, socket.id);
+        // socket.io library data store
+        socket.join(room);
+        callback("waitroom");
       }
       else {
         callback("invalid",`The room name "${room}" is already being used`);
@@ -45,18 +41,18 @@ io.on("connect", socket => {
     }
     else if (option === "join") {
       if(roomExists(room)) {
-        if(roomIsInGame(room)) {
-          callback("invalid", `The room "${room}" is already in session`);
-        }
-        else {
-          if(!nameIsTaken(name,room)) {
-            addUser(name, room, socket.id);
-            socket.join(room);
-            callback("waitingroom");
+        if(!nameIsTaken(name,room)) {
+          addUser(name, room, socket.id);
+          socket.join(room);
+          if(roomIsInGame(room)) {
+            callback("gameroom");
           }
           else {
-            callback("invalid",`The username "${name}" is already being used`);
+            callback("waitroom");
           }
+        }
+        else {
+          callback("invalid",`The username "${name}" is already being used`);
         }
       }
       else{
@@ -84,35 +80,54 @@ io.on("connect", socket => {
   // Starts the game when a user clicks start
   socket.on("startClicked", () => {
     const user = getUser(socket.id)
+    // In case more than one user press start game
+    if(roomIsInGame(user.room)){
+      return;
+    }
+
     addToInGame(user.room);
-    // Judge order initialization
-    randomizeOrder(user.room);
-    initJudgeIdx(user.room);
-    // Round initialization
+    initJudge(user.room);
     initRound(user.room);
+    initGameStatus(user.room);
 
     io.in(user.room).emit("startGame");
   });
 
-  // Checks whether the client is the current judge
-  socket.on("checkIfJudge",(callback) => {
+  // Responds with where the user ui should be
+  // in terms of game status and user role
+  socket.on("getPage",(callback) => {
     const user = getUser(socket.id);
-    //TESTING
+
+    const gameStatus = getGameStatus(user.room);
+    let userIsJudge;
+
     if(user.name===getJudge(user.room)){
+      userIsJudge = true;
       console.log(`${user.name} is the judge`);
     }
     else{
+      userIsJudge = false;
       console.log(`${user.name} is the guesser`);
     }
-    callback(user.name === getJudge(user.room));
+
+    if (gameStatus === "songSelection") {
+      userIsJudge ? callback("choose") : callback("wait")
+    }
+    else if (gameStatus === "guessSong") {
+      userIsJudge ? callback("hint") : callback("guess")
+    }
+    else if (gameStatus === "displayResults") {
+      callback("results");
+    }
   })
 
-  // Stores the song selected and allow judge to send hint
+  // Stores the song selected and advance UI
   socket.on("songSelected",(song, judgeToHintUI) => {
     const user = getUser(socket.id);
     updateSongToGuess(user.room,song);
 
-    // Advance Judge and Guessers UI (talked to kelley)
+    // async issues
+    updateGameStatus(user.room, "guessSong");
     socket.to(user.room).emit("startGuessing");
     judgeToHintUI();
 
