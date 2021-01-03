@@ -19,14 +19,10 @@ import socket from '../socket'
 
 const GameRoom = () => {
   const [players, setPlayers] = useState([]);
-  const [page, setPage] = useState("choose");
+  const [page, setPage] = useState("");
   const [showPlayerPanel, setShowPlayerPanel] = useState(true);
   const [showChatPanel, setShowChatPanel] = useState(true);
-  const [isJudge, setIsJudge] = useState();
   const [renderReady, setRenderReady] = useState(false);
-  // TESTING TIMER
-  const [gameTimer, setGameTimer] = useState("");
-
 
   const handlePageChange = (newpage) => {
     setPage(newpage);
@@ -48,21 +44,15 @@ const GameRoom = () => {
     });
     socket.emit("getPlayersInRoom");
 
-    socket.emit("checkIfJudge",(isJudgeBool) => {
-      setIsJudge(isJudgeBool);
-      setRenderReady(true);
-      // If the client is a guesser make the client wait for
-      // the judge to choose the song
-      if(!isJudgeBool) {
-        setPage("wait");
-      }
-    });
-
-    // TESTING TIMER
-    socket.on("timer", (serverTimer) => {
-      setGameTimer(serverTimer);
+    socket.emit("getPage",(page) => {
+      setPage(page);
     });
   }, [])
+
+  useEffect(() => {
+    // skips the first render
+    if (page) setRenderReady(true);
+  }, [page])
 
   const loader = (
     <div>
@@ -72,7 +62,6 @@ const GameRoom = () => {
   const component = (
     <Row className="roomRow align-items-center">
       <Col xs={4} sm={3} xl={2} className="roomCol">
-        {gameTimer}
         {showPlayerPanel
         ? <div className="panel playerPanel" onClick={handlePlayerPanelClick}>
             <h2>players</h2>
