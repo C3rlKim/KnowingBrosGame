@@ -11,6 +11,8 @@ const Choose = (props) => {
   const { handlePageChange } = props;
   const [titles, setTitles] = useState(null);
   const [value, setValue] = useState();
+  const [trackNum, setTrackNum] = useState();
+  const [answer, setAnswer] = useState();
 
   useEffect(() => {
     async function getPlaylist() {
@@ -35,14 +37,20 @@ const Choose = (props) => {
     getPlaylist();
   }, []);
 
-  const handleChange = (e) => {
+  const handleValueChange = (e) => {
     setValue(e.target.value);
+    setTrackNum(e.target.options.selectedIndex);
   }
 
+  const handleAnswerChange = (e) => {
+    setAnswer(e.target.value);
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    socket.emit("songSelected", value, () => {
+    // disable user submitting placeholder or empty string
+
+    socket.emit("songSelected", trackNum, answer, () => {
       handlePageChange("hint");
     });
   }
@@ -58,9 +66,14 @@ const Choose = (props) => {
         <Form.Label className="formLabel">
           SONG SELECTION
         </Form.Label>
-        <Form.Control className="formDropdown" as="select" value={value} onChange={handleChange}>
+        <Form.Control className="formDropdown" as="select" value={value} onChange={handleValueChange}>
           {titles}
         </Form.Control>
+
+        <Form.Label className="formLabel">
+          ANSWER TO GUESS
+        </Form.Label>
+        <Form.Control type="text" value={answer} onChange={handleAnswerChange} placeholder="explicit answer here ..."/>
 
         <Form.Label className="formLabel">
           SONG PLAYER

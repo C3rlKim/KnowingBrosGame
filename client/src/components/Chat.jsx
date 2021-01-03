@@ -13,9 +13,8 @@ const Chat = () => {
     if(input==="") {
       return;
     }
-    
+
     socket.emit("sendMessage", { input }, () => {
-      // socket.io acknowledgement
       setInput("");
     });
   }
