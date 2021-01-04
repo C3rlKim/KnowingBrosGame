@@ -162,19 +162,22 @@ io.on("connect", socket => {
     }
 
     // check if answer(talk to kelley)
-    if(!isAudio) {
-      if(getAnswer(user.room)) {
-        if(message === getAnswer(user.room)) {
-          // arbitrary points for now
-          let points = 12;
-          updatePoints(user.name,user.room, points);
+    if(!isAudio
+      && (user.name !== getJudge(user.room))
+      && (getAnswer(user.room))
+      && (message === getAnswer(user.room))
+    ) {
+      // arbitrary points for now
+      let points = 12;
+      updatePoints(user.name,user.room, points);
 
-          console.log(`${user.name} obtained ${getPoints(user.name,user.room)} points!`);
-        }
-      }
+      console.log(`${user.name} obtained ${getPoints(user.name,user.room)} points!`);
+      socket.emit("serverMessage", { message, userName: user.name, isAudio, isGuesser: true });
+      socket.to(user.room).emit("serverMessage", { message, userName: user.name, isAudio, guesser: user.name })
     }
-
-    io.in(user.room).emit("serverMessage", { message, userName: user.name, isAudio });
+    else {
+      io.in(user.room).emit("serverMessage", { message, userName: user.name, isAudio });
+    }
     msgConfirm();
   });
 

@@ -27,13 +27,21 @@ const Chat = () => {
   }, [])
 
   const messageGroup = messages.map((msgObj, idx) => {
-    return msgObj.isAudio ?
-    <div key={idx}>
-      <p>{msgObj.userName}:</p>
-      <audio controls src={msgObj.message} />
-    </div>
-    :
-    <p key={idx}>{msgObj.userName} : {msgObj.message}</p>
+    if (msgObj.isAudio) {
+      return (
+        <div key={idx}>
+          <p>{msgObj.userName}:</p>
+          <audio controls src={msgObj.message} />
+        </div>
+      );
+    }
+    if (msgObj.isGuesser)
+      return <p style={{color: "lightgreen"}} key={idx}>You guessed the right answer: {msgObj.message}</p>
+
+    if (msgObj.guesser)
+      return <p style={{color: "lightgreen"}} key={idx}>{msgObj.guesser} guessed the right answer!</p>
+
+    return <p key={idx}>{msgObj.userName} : {msgObj.message}</p>
   });
 
   return (
