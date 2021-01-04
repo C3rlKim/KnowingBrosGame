@@ -11,7 +11,7 @@ const roomToAnswer = {}
 const roomToTime = {};
 const roomToGameStatus = {};
 const roomToUserToPoints = {};
-const roomToNumOfCorrect = {};
+const roomToSetOfCorrectGuessers = {};
 
 
 // Addition and removal of user functions
@@ -69,24 +69,25 @@ const initRound = (room) => {
 // TrackNum and Answer functions
 const getTrackNum = (room) => roomToTrackNum[room]
 const getAnswer = (room) => roomToAnswer[room]
-const updateTrackNum = (room, trackNum) => roomToTrackNum[room] = trackNum;
-const updateAnswer = (room, answer) => roomToAnswer[room] = answer;
+const updateTrackNum = (room, trackNum) => roomToTrackNum[room] = trackNum
+const updateAnswer = (room, answer) => roomToAnswer[room] = answer
 
 
 // Time functions
-const initTime = (room) => roomToTime[room] = 60;
-const getTime = (room) => roomToTime[room];
-const updateTime = (room) => roomToTime[room] -= 1;
+const initTime = (room) => roomToTime[room] = 60
+const getTime = (room) => roomToTime[room]
+const updateTime = (room) => roomToTime[room] -= 1
 
 // Game status functions
-const initGameStatus = (room) => roomToGameStatus[room] = "songSelection";
-const getGameStatus = (room) => roomToGameStatus[room];
-const updateGameStatus = (room, status) => roomToGameStatus[room] = status;
+const initGameStatus = (room) => roomToGameStatus[room] = "songSelection"
+const getGameStatus = (room) => roomToGameStatus[room]
+const updateGameStatus = (room, status) => roomToGameStatus[room] = status
 
 // Point functions
-const initNumOfCorrect = (room) => roomToNumOfCorrect[room] = 0
+const initCorrectGuessers = (room) => roomToSetOfCorrectGuessers[room] = new Set()
+const addCorrectGuesser = (name, room) => roomToSetOfCorrectGuessers[room].add(name)
+const isCorrectGuesser = (name, room) => roomToSetOfCorrectGuessers[room].has(name)
 const updatePoints = (name, room, points) => roomToUserToPoints[room][name] += points
-//Testing
 const getPoints = (name, room) => roomToUserToPoints[room][name]
 
 module.exports = {
@@ -100,5 +101,5 @@ module.exports = {
   updateTrackNum, updateAnswer,
   initTime, getTime, updateTime,
   initGameStatus, getGameStatus, updateGameStatus,
-  initNumOfCorrect, updatePoints, getPoints
+  initCorrectGuessers, addCorrectGuesser, isCorrectGuesser, updatePoints, getPoints
 };

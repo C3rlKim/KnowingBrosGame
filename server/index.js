@@ -20,7 +20,7 @@ const {
   updateTrackNum, updateAnswer,
   initTime, getTime, updateTime,
   initGameStatus, getGameStatus, updateGameStatus,
-  initNumOfCorrect, updatePoints, getPoints
+  initCorrectGuessers, addCorrectGuesser, isCorrectGuesser, updatePoints, getPoints
 } = require('./roomAndUser.js');
 
 io.on("connect", socket => {
@@ -91,7 +91,7 @@ io.on("connect", socket => {
     initJudge(user.room);
     initRound(user.room);
     initGameStatus(user.room);
-    initNumOfCorrect(user.room);
+    initCorrectGuessers(user.room);
 
     io.in(user.room).emit("startGame");
   });
@@ -164,12 +164,15 @@ io.on("connect", socket => {
     // check if answer(talk to kelley)
     if(!isAudio) {
       if(getAnswer(user.room)) {
-        if(message === getAnswer(user.room)) {
-          // arbitrary points for now
-          let points = 12;
+        if(isCorrectGuesser(user.name, user.room)) {
+            // If user is already correct her text should only be seen by those who already guessed it
+        }
+        else if(message === getAnswer(user.room) && user.name !== getJudge(user.room)) {
+          // Points in relation to how fast the user guessed
+          const points = getTime(user.room);
           updatePoints(user.name,user.room, points);
-
           console.log(`${user.name} obtained ${getPoints(user.name,user.room)} points!`);
+          addCorrectGuesser(user.name, user.room);
         }
       }
     }

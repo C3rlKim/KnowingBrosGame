@@ -22,6 +22,7 @@ const GameRoom = () => {
   const [page, setPage] = useState("");
   const [showPlayerPanel, setShowPlayerPanel] = useState(true);
   const [showChatPanel, setShowChatPanel] = useState(true);
+  const [timer, setTimer] = useState();
   const [renderReady, setRenderReady] = useState(false);
 
   const handlePageChange = (newpage) => {
@@ -44,6 +45,10 @@ const GameRoom = () => {
     });
     socket.emit("getPlayersInRoom");
 
+    socket.on("timer", (serverTime) => {
+      setTimer(serverTime);
+    });
+
     socket.emit("getPage",(page) => {
       setPage(page);
     });
@@ -62,6 +67,7 @@ const GameRoom = () => {
   const component = (
     <Row className="roomRow align-items-center">
       <Col xs={4} sm={3} xl={2} className="roomCol">
+        {timer}
         {showPlayerPanel
         ? <div className="panel playerPanel" onClick={handlePlayerPanelClick}>
             <h2>players</h2>
