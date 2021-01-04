@@ -131,7 +131,6 @@ io.on("connect", socket => {
     updateAnswer(user.room, answer);
     console.log(`The answer for ${user.room} is ${getAnswer(user.room)}`);
 
-    // async issues (talk to kelley)
     updateGameStatus(user.room, "guessSong");
     socket.to(user.room).emit("startGuessing");
     judgeToHintUI();
@@ -162,10 +161,10 @@ io.on("connect", socket => {
     }
 
     // check if answer(talk to kelley)
+    // users who are already correct, if they write answer, text is censored
     if(!isAudio) {
       if(getAnswer(user.room)) {
         if(isCorrectGuesser(user.name, user.room)) {
-            // If user is already correct her text should only be seen by those who already guessed it
         }
         else if(message === getAnswer(user.room) && user.name !== getJudge(user.room)) {
           // Points in relation to how fast the user guessed
