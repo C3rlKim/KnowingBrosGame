@@ -20,7 +20,7 @@ const {
   updateTrackNum, updateAnswer,
   initTime, getTime, updateTime,
   initGameStatus, getGameStatus, updateGameStatus,
-  initNumOfCorrect, updatePoints, getPoints
+  initCorrectGuessers, addCorrectGuesser, isCorrectGuesser, updatePoints, getPoints
 } = require('./roomAndUser.js');
 
 io.on("connect", socket => {
@@ -91,7 +91,7 @@ io.on("connect", socket => {
     initJudge(user.room);
     initRound(user.room);
     initGameStatus(user.room);
-    initNumOfCorrect(user.room);
+    initCorrectGuessers(user.room);
 
     io.in(user.room).emit("startGame");
   });
@@ -131,7 +131,6 @@ io.on("connect", socket => {
     updateAnswer(user.room, answer);
     console.log(`The answer for ${user.room} is ${getAnswer(user.room)}`);
 
-    // async issues (talk to kelley)
     updateGameStatus(user.room, "guessSong");
     socket.to(user.room).emit("startGuessing");
     judgeToHintUI();
@@ -151,33 +150,29 @@ io.on("connect", socket => {
   // Listen client's sendMessage and emits message to the room
   socket.on("sendMessage",({ input, mediaBlobUrl }, msgConfirm) => {
     const user = getUser(socket.id);
-    let message, isAudio;
+    const answer = getAnswer(user.room);
     if (input) {
-      message = input;
-      isAudio = false;
-    }
-    else {
-      message = mediaBlobUrl;
-      isAudio = true;
+      if (answer && (isCorrectGuesser(user.name, user.room) || user.name === getJudge(user.room)) && input.includes(answer)) {
+        // if users who are already correct or judges send answer, text is censored
+        io.in(user.room).emit("serverMessage", { message: mediaBlobUrl, userName: user.name, isCensored: true });
+      }
+      else if(answer && (input === answer)) {
+        // Points in relation to how fast the user guessed
+        const points = getTime(user.room);
+        updatePoints(user.name,user.room, points);
+        console.log(`${user.name} obtained ${getPoints(user.name,user.room)} points!`);
+
+        addCorrectGuesser(user.name, user.room);
+        socket.emit("serverMessage", { message: input, userName: user.name, isGuesser: true });
+        socket.to(user.room).emit("serverMessage", { message: input, userName: user.name, guesser: user.name })
+      }
+      else io.in(user.room).emit("serverMessage", { message: input, userName: user.name });
     }
 
-    // check if answer(talk to kelley)
-    if(!isAudio
-      && (user.name !== getJudge(user.room))
-      && (getAnswer(user.room))
-      && (message === getAnswer(user.room))
-    ) {
-      // arbitrary points for now
-      let points = 12;
-      updatePoints(user.name,user.room, points);
-
-      console.log(`${user.name} obtained ${getPoints(user.name,user.room)} points!`);
-      socket.emit("serverMessage", { message, userName: user.name, isAudio, isGuesser: true });
-      socket.to(user.room).emit("serverMessage", { message, userName: user.name, isAudio, guesser: user.name })
-    }
     else {
-      io.in(user.room).emit("serverMessage", { message, userName: user.name, isAudio });
+      io.in(user.room).emit("serverMessage", { message: mediaBlobUrl, userName: user.name, isAudio: true });
     }
+
     msgConfirm();
   });
 

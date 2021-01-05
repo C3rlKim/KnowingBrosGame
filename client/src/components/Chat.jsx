@@ -41,6 +41,9 @@ const Chat = () => {
     if (msgObj.guesser)
       return <p style={{color: "lightgreen"}} key={idx}>{msgObj.guesser} guessed the right answer!</p>
 
+    if (msgObj.isCensored)
+      return <p style={{color: "gray"}} key={idx}>Illegal action: {msgObj.userName} attempted to reveal the right answer.</p>
+
     return <p key={idx}>{msgObj.userName} : {msgObj.message}</p>
   });
 
