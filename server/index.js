@@ -150,33 +150,29 @@ io.on("connect", socket => {
   // Listen client's sendMessage and emits message to the room
   socket.on("sendMessage",({ input, mediaBlobUrl }, msgConfirm) => {
     const user = getUser(socket.id);
-    let message, isAudio;
+    const answer = getAnswer(user.room);
     if (input) {
-      message = input;
-      isAudio = false;
-    }
-    else {
-      message = mediaBlobUrl;
-      isAudio = true;
-    }
-
-    // check if answer(talk to kelley)
-    // users who are already correct, if they write answer, text is censored
-    if(!isAudio) {
-      if(getAnswer(user.room)) {
-        if(isCorrectGuesser(user.name, user.room)) {
-        }
-        else if(message === getAnswer(user.room) && user.name !== getJudge(user.room)) {
-          // Points in relation to how fast the user guessed
-          const points = getTime(user.room);
-          updatePoints(user.name,user.room, points);
-          console.log(`${user.name} obtained ${getPoints(user.name,user.room)} points!`);
-          addCorrectGuesser(user.name, user.room);
-        }
+      if (answer && (isCorrectGuesser(user.name, user.room) || user.name === getJudge(user.room)) && input.includes(answer)) {
+        // if users who are already correct or judges send answer, text is censored
+        io.in(user.room).emit("serverMessage", { message: mediaBlobUrl, userName: user.name, isCensored: true });
       }
+      else if(answer && (input === answer)) {
+        // Points in relation to how fast the user guessed
+        const points = getTime(user.room);
+        updatePoints(user.name,user.room, points);
+        console.log(`${user.name} obtained ${getPoints(user.name,user.room)} points!`);
+
+        addCorrectGuesser(user.name, user.room);
+        socket.emit("serverMessage", { message: input, userName: user.name, isGuesser: true });
+        socket.to(user.room).emit("serverMessage", { message: input, userName: user.name, guesser: user.name })
+      }
+      else io.in(user.room).emit("serverMessage", { message: input, userName: user.name });
     }
 
-    io.in(user.room).emit("serverMessage", { message, userName: user.name, isAudio });
+    else {
+      io.in(user.room).emit("serverMessage", { message: mediaBlobUrl, userName: user.name, isAudio: true });
+    }
+
     msgConfirm();
   });
 
