@@ -18,6 +18,7 @@ const {
   initRound,
   getTrackNum, getAnswer,
   updateTrackNum, updateAnswer,
+  containsMatch, isMatch,
   initTime, getTime, updateTime,
   initGameStatus, getGameStatus, updateGameStatus,
   initCorrectGuessers, addCorrectGuesser, isCorrectGuesser, updatePoints, getPoints
@@ -152,11 +153,11 @@ io.on("connect", socket => {
     const user = getUser(socket.id);
     const answer = getAnswer(user.room);
     if (input) {
-      if (answer && (isCorrectGuesser(user.name, user.room) || user.name === getJudge(user.room)) && input.includes(answer)) {
+      if (answer && (isCorrectGuesser(user.name, user.room) || user.name === getJudge(user.room)) && containsMatch(input, answer)) {
         // if users who are already correct or judges send answer, text is censored
         io.in(user.room).emit("serverMessage", { message: mediaBlobUrl, userName: user.name, isCensored: true });
       }
-      else if(answer && (input === answer)) {
+      else if(answer && isMatch(input, answer)) {
         // Points in relation to how fast the user guessed
         const points = getTime(user.room);
         updatePoints(user.name,user.room, points);
@@ -164,7 +165,7 @@ io.on("connect", socket => {
 
         addCorrectGuesser(user.name, user.room);
         socket.emit("serverMessage", { message: input, userName: user.name, isGuesser: true });
-        socket.to(user.room).emit("serverMessage", { message: input, userName: user.name, guesser: user.name })
+        socket.to(user.room).emit("serverMessage", { message: input, userName: user.name, guesser: user.name });
       }
       else io.in(user.room).emit("serverMessage", { message: input, userName: user.name });
     }

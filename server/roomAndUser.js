@@ -70,7 +70,7 @@ const initRound = (room) => {
 const getTrackNum = (room) => roomToTrackNum[room]
 const getAnswer = (room) => roomToAnswer[room]
 const updateTrackNum = (room, trackNum) => roomToTrackNum[room] = trackNum
-const updateAnswer = (room, answer) => roomToAnswer[room] = answer
+const updateAnswer = (room, answer) => roomToAnswer[room] = answer.replace(/\s+/g,' ').replace(/[^0-9a-z ]/gi, '').trim().toLowerCase(); //remove extra spaces & non-alahanumeric characters
 
 
 // Time functions
@@ -90,6 +90,46 @@ const isCorrectGuesser = (name, room) => roomToSetOfCorrectGuessers[room].has(na
 const updatePoints = (name, room, points) => roomToUserToPoints[room][name] += points
 const getPoints = (name, room) => roomToUserToPoints[room][name]
 
+const containsMatch = (input, answer) => {
+  let answerArray = answer.split(" ");
+  for (word of answerArray) {
+    if (!input.includes(word)) return false;
+  }
+  return true;
+}
+
+const isMatch = (input, answer) => {
+  let answerArray = answer.split(" ");
+
+  //remove extra spaces & non-alahanumeric characters
+  const inputArray = input.replace(/\s+/g,' ').replace(/[^0-9a-z ]/gi, '').trim().toLowerCase().split(" ");
+  if (inputArray.size != answerArray.size) return false;
+
+  //can store map later to improve efficiency (although will have to make a copy each time anyways)
+  let answerMap = new Map(); //word->num of occurrences
+  for (word of answerArray) {
+    if (answerMap.has(word)) {
+      answerMap.set(word, answerMap.get(word) + 1);
+    }
+    else {
+      answerMap.set(word, 1);
+    }
+  }
+
+  let occurrences;
+  for (word of inputArray) {
+    if (answerMap.has(word)) {
+      occurrences = answerMap.get(word) - 1;
+      if (occurrences == 0) answerMap.delete(word);
+      else answerMap.set(word, occurrences);
+    }
+    else {
+      return false;
+    }
+  }
+  return (answerMap.size == 0);
+}
+
 module.exports = {
   addUser, removeUser,
   roomExists, nameIsTaken,
@@ -99,6 +139,7 @@ module.exports = {
   initRound,
   getTrackNum, getAnswer,
   updateTrackNum, updateAnswer,
+  containsMatch, isMatch,
   initTime, getTime, updateTime,
   initGameStatus, getGameStatus, updateGameStatus,
   initCorrectGuessers, addCorrectGuesser, isCorrectGuesser, updatePoints, getPoints
