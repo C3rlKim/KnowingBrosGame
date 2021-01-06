@@ -70,7 +70,8 @@ const initRound = (room) => {
 const getTrackNum = (room) => roomToTrackNum[room]
 const getAnswer = (room) => roomToAnswer[room]
 const updateTrackNum = (room, trackNum) => roomToTrackNum[room] = trackNum
-const updateAnswer = (room, answer) => roomToAnswer[room] = answer.replace(/\s+/g,' ').replace(/[^0-9a-z ]/gi, '').trim().toLowerCase(); //remove extra spaces & non-alahanumeric characters
+//replace dashes, remove extra spaces & non-alahanumeric characters
+const updateAnswer = (room, answer) => roomToAnswer[room] = answer.replace(/-/g, ' ').replace(/\s+/g,' ').replace(/[^0-9a-z ]/gi, '').trim().toLowerCase();
 
 
 // Time functions
@@ -101,9 +102,9 @@ const containsMatch = (input, answer) => {
 const isMatch = (input, answer) => {
   let answerArray = answer.split(" ");
 
+  //replace dashes, in case user inputs 'artist-song title'
   //remove extra spaces & non-alahanumeric characters
-  const inputArray = input.replace(/\s+/g,' ').replace(/[^0-9a-z ]/gi, '').trim().toLowerCase().split(" ");
-  if (inputArray.size != answerArray.size) return false;
+  const inputArray = input.replace(/-/g, ' ').replace(/\s+/g,' ').replace(/[^0-9a-z ]/gi, '').trim().toLowerCase().split(" ");
 
   //can store map later to improve efficiency (although will have to make a copy each time anyways)
   let answerMap = new Map(); //word->num of occurrences
@@ -117,17 +118,16 @@ const isMatch = (input, answer) => {
   }
 
   let occurrences;
+  let extra = 0;
   for (word of inputArray) {
     if (answerMap.has(word)) {
       occurrences = answerMap.get(word) - 1;
       if (occurrences == 0) answerMap.delete(word);
       else answerMap.set(word, occurrences);
     }
-    else {
-      return false;
-    }
+    else extra++;
   }
-  return (answerMap.size == 0);
+  return extra + answerMap.size;//extra input + missing words from answer
 }
 
 module.exports = {

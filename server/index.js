@@ -152,12 +152,11 @@ io.on("connect", socket => {
   socket.on("sendMessage",({ input, mediaBlobUrl }, msgConfirm) => {
     const user = getUser(socket.id);
     const answer = getAnswer(user.room);
+    const canGuess = !isCorrectGuesser(user.name, user.room) && user.name !== getJudge(user.room);
+
     if (input) {
-      if (answer && (isCorrectGuesser(user.name, user.room) || user.name === getJudge(user.room)) && containsMatch(input, answer)) {
-        // if users who are already correct or judges send answer, text is censored
-        io.in(user.room).emit("serverMessage", { message: mediaBlobUrl, userName: user.name, isCensored: true });
-      }
-      else if(answer && isMatch(input, answer)) {
+      const difference = isMatch(input, answer);
+      if (answer && canGuess && difference == 0) { //a match
         // Points in relation to how fast the user guessed
         const points = getTime(user.room);
         updatePoints(user.name,user.room, points);
@@ -166,6 +165,10 @@ io.on("connect", socket => {
         addCorrectGuesser(user.name, user.room);
         socket.emit("serverMessage", { message: input, userName: user.name, isGuesser: true });
         socket.to(user.room).emit("serverMessage", { message: input, userName: user.name, guesser: user.name });
+      }
+      else if (answer && canGuess && difference < 2) io.in(user.room).emit("serverMessage", { message: input, userName: user.name, isClose: true });
+      else if (answer && !canGuess && containsMatch(input, answer)) {
+        io.in(user.room).emit("serverMessage", { message: mediaBlobUrl, userName: user.name, isCensored: true });
       }
       else io.in(user.room).emit("serverMessage", { message: input, userName: user.name });
     }
