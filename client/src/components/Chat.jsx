@@ -44,6 +44,12 @@ const Chat = () => {
     if (msgObj.isCensored)
       return <p style={{color: "gray"}} key={idx}>Illegal action: {msgObj.userName} attempted to reveal the right answer.</p>
 
+    if (msgObj.hasLeftRoom)
+      return <p style={{color: "black"}} key={idx}>{msgObj.userName} has left.</p>
+
+    if (msgObj.hasJoinedRoom)
+      return <p style={{color: "black"}} key={idx}>{msgObj.userName} has joined.</p>
+
     return <p style={{color: msgObj.isClose ? "yellow" : ""} } key={idx}>{msgObj.userName} : {msgObj.message}</p>
   });
 
