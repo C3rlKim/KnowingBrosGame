@@ -36,7 +36,7 @@ const GameRoom = () => {
 
   const handleChatPanelClick = (e) => {
     e.preventDefault();
-    //setShowChatPanel((prev) => !prev);
+    setShowChatPanel((prev) => !prev);
   }
 
   useEffect(() => {
@@ -68,15 +68,23 @@ const GameRoom = () => {
     <Row className="roomRow align-items-center">
       <Col xs={4} sm={3} xl={2} className="roomCol">
         {timer}
-        {showPlayerPanel
-        ? <div className="panel playerPanel" onClick={handlePlayerPanelClick}>
-            <h2>players</h2>
-            <ul>
-              {players.map((player) => <li key={player}> {player} </li>)}
-            </ul>
-          </div>
-        : <div className="panel playerPanel closed" onClick={handlePlayerPanelClick}></div>
-        }
+        <div hidden={!showPlayerPanel} className="panel playerPanel">
+          <svg onClick={handlePlayerPanelClick} viewBox="0 0 35 35" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+            <g>
+              <title>background</title>
+              <rect fill="none" id="canvas_background" height="402" width="582" y="-1" x="-1"/>
+            </g>
+            <g>
+              <title>Layer 1</title>
+              <path transform="rotate(-180 15.296852111816408,16.101179122924805) " stroke="null" strokeWidth="0" id="svg_2" d="m6.78289,27.561183l12.272302,-11.460002l-12.272302,-11.460002a2.199337,2.05009 0 0 1 0,-2.890627l0,0a2.199337,2.05009 0 0 1 3.101065,0l13.987785,13.038571a2.001397,1.865582 0 0 1 0,2.624115l-13.987785,13.038571a2.199337,2.05009 0 0 1 -3.101065,0l0,0a2.199337,2.05009 0 0 1 0,-2.890627z"/>
+            </g>
+          </svg>
+          <h2>players</h2>
+          <ul>
+            {players.map((player) => <li key={player}> {player} </li>)}
+          </ul>
+        </div>
+        <div hidden={showPlayerPanel} className="panel playerPanel closed" onClick={handlePlayerPanelClick}></div>
       </Col>
 
       <Col xs={4} sm={6} xl={8} >
@@ -90,13 +98,21 @@ const GameRoom = () => {
       </Col>
 
       <Col xs={4} sm={3} xl={2} className="roomCol">
-        {showChatPanel
-        ? <div className="panel chatPanel" onClick={handleChatPanelClick}>
+        <div hidden={!showChatPanel} className="panel chatPanel">
+            <svg onClick={handleChatPanelClick} viewBox="0 0 35 35" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+              <g>
+                <title>background</title>
+                <rect fill="none" id="canvas_background" height="402" width="582" y="-1" x="-1"/>
+              </g>
+              <g>
+                <title>Layer 1</title>
+                <path stroke="null" strokeWidth="0" id="svg_2" d="m8.26687,27.561183l12.272302,-11.460002l-12.272302,-11.460002a2.199337,2.05009 0 0 1 0,-2.890627l0,0a2.199337,2.05009 0 0 1 3.101065,0l13.987785,13.038571a2.001397,1.865582 0 0 1 0,2.624115l-13.987785,13.038571a2.199337,2.05009 0 0 1 -3.101065,0l0,0a2.199337,2.05009 0 0 1 0,-2.890627z"/>
+              </g>
+            </svg>
             <h2>chat</h2>
             <Chat/>
           </div>
-        : <div className="panel closed chatPanel" id="chatPanelClosed" onClick={handleChatPanelClick}></div>
-        }
+        <div hidden={showChatPanel} className="panel closed chatPanel" id="chatPanelClosed" onClick={handleChatPanelClick}></div>
       </Col>
     </Row>
   )
