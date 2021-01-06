@@ -105,7 +105,6 @@ const isMatch = (input, answer) => {
   //replace dashes, in case user inputs 'artist-song title'
   //remove extra spaces & non-alahanumeric characters
   const inputArray = input.replace(/-/g, ' ').replace(/\s+/g,' ').replace(/[^0-9a-z ]/gi, '').trim().toLowerCase().split(" ");
-  if (inputArray.size != answerArray.size) return false;
 
   //can store map later to improve efficiency (although will have to make a copy each time anyways)
   let answerMap = new Map(); //word->num of occurrences
@@ -119,17 +118,16 @@ const isMatch = (input, answer) => {
   }
 
   let occurrences;
+  let extra = 0;
   for (word of inputArray) {
     if (answerMap.has(word)) {
       occurrences = answerMap.get(word) - 1;
       if (occurrences == 0) answerMap.delete(word);
       else answerMap.set(word, occurrences);
     }
-    else {
-      return false;
-    }
+    else extra++;
   }
-  return (answerMap.size == 0);
+  return extra + answerMap.size;//extra input + missing words from answer
 }
 
 module.exports = {
