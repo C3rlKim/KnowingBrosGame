@@ -16,7 +16,7 @@ const CreateJoinForm = ({ name, room, option, handleChangeName, handleChangeRoom
       <Form onSubmit={handleSubmit}>
         <Form.Group>
           <Form.Label className="formLabel">ROOM NAME</Form.Label>
-          <Form.Control value={room} onChange={handleChangeRoom} placeholder="Nefarious Nayeon">
+          <Form.Control autoFocus value={room} onChange={handleChangeRoom} placeholder="Nefarious Nayeon">
           </Form.Control>
         </Form.Group>
 
