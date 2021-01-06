@@ -29,7 +29,7 @@ const Chat = () => {
   const messageGroup = messages.map((msgObj, idx) => {
     if (msgObj.isAudio) {
       return (
-        <div key={idx}>
+        <div className="audioDiv" key={idx}>
           <p>{msgObj.userName}:</p>
           <audio controls src={msgObj.message} />
         </div>
@@ -48,10 +48,12 @@ const Chat = () => {
   });
 
   return (
-    <div>
-      <ScrollToBottom>
-        {messageGroup}
-      </ScrollToBottom>
+    <div id="chatBox">
+      <div id="messageBox">
+        <ScrollToBottom>
+          {messageGroup}
+        </ScrollToBottom>
+      </div>
       <input type="text"
         value={input}
         onChange={({ target : { value }}) => setInput(value)}

@@ -155,7 +155,7 @@ io.on("connect", socket => {
     const canGuess = !isCorrectGuesser(user.name, user.room) && user.name !== getJudge(user.room);
 
     if (input) {
-      const difference = isMatch(input, answer);
+      let difference = answer ? isMatch(input, answer) : undefined;
       if (answer && canGuess && difference == 0) { //a match
         // Points in relation to how fast the user guessed
         const points = getTime(user.room);
