@@ -48,6 +48,7 @@ io.on("connect", socket => {
           addUser(name, room, socket.id);
           socket.join(room);
           if(roomIsInGame(room)) {
+            socket.to(room).emit("serverMessage", { userName: name, hasJoinedRoom: true });
             callback("gameroom");
           }
           else {
@@ -187,7 +188,8 @@ io.on("connect", socket => {
     const user = getUser(socket.id);
     if(user) {
       removeUser(user.name,user.room,socket.id);
-      socket.to(user.room).emit("playersInRoom",getUsersInRoom(user.room));
+      socket.to(user.room).emit("serverMessage", { userName: user.name, hasLeftRoom: true });
+      socket.to(user.room).emit("playersInRoom", getUsersInRoom(user.room));
     }
   })
 });
