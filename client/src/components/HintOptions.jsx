@@ -12,14 +12,10 @@ import StopButton from '../images/stop.svg';
 import socket from '../socket';
 
 const HintOptions = () => {
-  const handlePlay1sec = () => {
+  const handlePlaySnippet = (seconds, e) => {
+    e.preventDefault();
     //emit to guessers
-  }
-  const handlePlay5sec = () => {
-    //emit to guessers
-  }
-  const handlePlay10sec = () => {
-    //emit to guessers
+    socket.emit("playSnippetClicked", seconds);
   }
 
   const {
@@ -46,16 +42,16 @@ const HintOptions = () => {
       <Row>
         <Col xs={12} lg={4} className="hint">
           <h3>Play a short snippet</h3>
-          <MainButton onClick={handlePlay1sec}>
+          <MainButton onClick={(e) => handlePlaySnippet(1, e)}>
             Play 1 sec
           </MainButton>
 
-          <MainButton onClick={handlePlay5sec}>
-            Play 5 sec
+          <MainButton onClick={(e) => handlePlaySnippet(3, e)}>
+            Play 3 sec
           </MainButton>
 
-          <MainButton onClick={handlePlay10sec}>
-           Play 10 sec
+          <MainButton onClick={(e) => handlePlaySnippet(5, e)}>
+           Play 5 sec
           </MainButton>
         </Col>
 

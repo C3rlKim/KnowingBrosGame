@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 
 import Form from 'react-bootstrap/Form';
-import ReactPlayer from 'react-player';
+import ReactPlayer from 'react-player/soundcloud';
 import MainButton from './MainButton';
 
 import socket from '../socket';
@@ -10,9 +9,9 @@ import socket from '../socket';
 const Choose = (props) => {
   const { handlePageChange } = props;
   const [titles, setTitles] = useState(null);
-  const [value, setValue] = useState();
+  const [value, setValue] = useState(0);
   const [trackNum, setTrackNum] = useState();
-  const [answer, setAnswer] = useState();
+  const [answer, setAnswer] = useState("");
 
   useEffect(() => {
     async function getPlaylist() {
@@ -49,7 +48,8 @@ const Choose = (props) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // disable user submitting placeholder or empty string
-
+    console.log(trackNum);
+    console.log(answer);
     socket.emit("songSelected", trackNum, answer, () => {
       handlePageChange("hint");
     });
@@ -81,6 +81,13 @@ const Choose = (props) => {
         <ReactPlayer
           url="https://soundcloud.com/kaetly-rojas/sets/kpop"
           width='100%'
+          config={{
+            soundcloud: {
+              options: {
+                visual: false
+              }
+            }
+          }}
         />
       </Form>
     </div>
