@@ -29,7 +29,7 @@ const Chat = () => {
   const messageGroup = messages.map((msgObj, idx) => {
     if (msgObj.isAudio) {
       return (
-        <div className="audioDiv" key={idx}>
+        <div key={idx}>
           <p>{msgObj.userName}:</p>
           <audio controls src={msgObj.message} />
         </div>

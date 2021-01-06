@@ -47,6 +47,12 @@
             border-radius: 10px;
           }
         }
+
+        #playerBox {
+          height: 80%;
+          overflow-y: scroll;
+          padding-right: 1rem;
+        }
       }
 
       .chatPanel {
@@ -75,17 +81,10 @@
           #messageBox {
             height: 80%;
             overflow-y: scroll;
-
-            p {
-              padding-right: 1rem;
-            }
-
-            .audioDiv {
-              margin-right: 1rem;
-
-              audio {
-                width: 100%;
-              }
+            padding-right: 1rem;
+            
+            audio {
+              width: 100%;
             }
           }
         }
