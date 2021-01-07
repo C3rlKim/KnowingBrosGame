@@ -1,89 +1,108 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
 
-import Form from 'react-bootstrap/Form';
 import ReactPlayer from 'react-player';
-import MainButton from './MainButton';
 
-const start = 10;
+import socket from '../socket';
+
+const start = 30;
 
 const Guess = (props) => {
-  let {handler, trackNumber} = props;
-  trackNumber = 0;//hardcode prop
+  let { handlePageChange } = props;
+  const [track, setTrack] = useState(5);
   const [playing, setPlaying] = useState(false);
-  const [whichPlaying, setWhichPlaying] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false); //number of seconds of the snippet hint
+  const [seconds, setSeconds] = useState(0);
+  const [key, setKey] = useState(-1);
+  const [preparationMsg, setPreparationMsg] = useState("");
+  const [countdown, setCountdown] = useState(-1);
   const playerRef = useRef(null);
+  const timerRef = useRef(null);
 
-  //use effect hook to execute sequentially so 'playing' is updated last
-  //and not overidden by async updates
   useEffect(() => {
-    if (whichPlaying === 0) {
-      setPlaying(false);
+    socket.emit("getSelectedSong");
+
+    socket.on("selectedSong", (track) => {
+      setTrack(track);
+    });;
+
+    socket.on("playSnippet", (seconds) => {
+      setSeconds(seconds);
+    });
+
+    //move to results page once 1-everyone guesses right, 2-timer runs out
+    // socket.on("---", () => {
+    //   handlePageChange("---");
+    // })
+  }, []);
+
+  useEffect(() => {
+    if (seconds) setCountdown(5);
+  }, [seconds]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if ((countdown >= 0)) {
+        setPreparationMsg("Prepare to listen... Playing " + seconds + "-second hint in " + countdown);
+        if (countdown > 0) setCountdown(countdown - 1);
+        else if (countdown === 0) setIsPlaying(true);
+      }
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [countdown]);
+
+  //update 'playing' last so it's not overidden by async updates to other states
+  useEffect(() => {
+    if (!isPlaying) {
+      if (playing) {
+        setPlaying(false);
+        setPreparationMsg("");
+      }
     }
     else {
-      playerRef.current.player.seekTo(start);
-      setPlaying(true);
+      playerRef.current.seekTo(start);
+      if (!playing) setPlaying(true);
     }
-  }, [whichPlaying]);
+  }, [isPlaying]);
 
-  const handlePlay1sec = () => {
-    setWhichPlaying(1);
-  }
-  const handlePlay5sec = () => {
-    setWhichPlaying(5);
-  }
-  const handlePlay10sec = () => {
-    setWhichPlaying(10);
-  }
-  // Latency issues
+  // Latency issues (progressInterval is at 500ms right now)
   const handleProgress = (progress) => {
     console.log("progress", progress);
-    if ((progress.playedSeconds - start) >= whichPlaying) {
+    if ((progress.playedSeconds - start) >= seconds) {
       console.log("hit");
-      setWhichPlaying(0);
+      setIsPlaying(false);
     }
   }
+
+  //force react player rerender with new start_track when track changes
+  useEffect(() => {
+    setKey(key+1);
+  }, [track]);
 
   return (
     <div>
       <h1>guess the song</h1>
+      <p>send your guesses in the chat</p>
 
-      <MainButton
-        onClick={handlePlay1sec}
-      >
-        Play 1 sec
-      </MainButton>
-
-      <MainButton
-        onClick={handlePlay5sec}
-      >
-        Play 5 sec
-      </MainButton>
-
-      <MainButton
-        onClick={handlePlay10sec}
-      >
-       Play 10 sec
-      </MainButton>
-
-      <p className="errorTxt">invalid song choice</p>
-      <p className="errorTxt">check spelling of artist or title</p>
-
+      <p style={{color: "orange"}}>{preparationMsg}</p>
       <ReactPlayer
+        key={key}
         hidden
         ref={playerRef}
+        progressInterval={500}
         url="https://soundcloud.com/kaetly-rojas/sets/kpop"
         playing={playing}
         config={{
           soundcloud: {
-            options: { start_track: trackNumber }
+            options: { 
+              start_track: track,
+              visual: false
+            }
           }
         }}
         width="100%"
         height="100%"
         onProgress={handleProgress}
       />
-
     </div>
   );
 }

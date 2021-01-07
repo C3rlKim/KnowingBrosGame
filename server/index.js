@@ -100,7 +100,7 @@ io.on("connect", socket => {
 
   // Responds with where the user ui should be
   // in terms of game status and user role
-  socket.on("getPage",(callback) => {
+  socket.on("getPage", (callback) => {
     const user = getUser(socket.id);
 
     const gameStatus = getGameStatus(user.room);
@@ -124,10 +124,10 @@ io.on("connect", socket => {
     else if (gameStatus === "displayResults") {
       callback("results");
     }
-  })
+  });
 
   // Stores the song selected and advance UI
-  socket.on("songSelected",(trackNum, answer, judgeToHintUI) => {
+  socket.on("songSelected", (trackNum, answer, judgeToHintUI) => {
     const user = getUser(socket.id);
     updateTrackNum(user.room, trackNum);
     updateAnswer(user.room, answer);
@@ -145,12 +145,23 @@ io.on("connect", socket => {
         // add logic of end of round
       }
       updateTime(user.room);
-      io.in(user.room).emit("timer",getTime(user.room));
+      io.in(user.room).emit("timer", getTime(user.room));
     }, 1000)
-  })
+  });
+
+  socket.on("getSelectedSong", () => {
+    const user = getUser(socket.id);
+    socket.emit("selectedSong", getTrackNum(user.room));
+  });
+
+  // Send song snippet hint to guessers
+  socket.on("playSnippetClicked", (seconds) => {
+    const user = getUser(socket.id);
+    socket.to(user.room).emit("playSnippet", seconds);
+  });
 
   // Listen client's sendMessage and emits message to the room
-  socket.on("sendMessage",({ input, mediaBlobUrl }, msgConfirm) => {
+  socket.on("sendMessage", ({ input, mediaBlobUrl }, msgConfirm) => {
     const user = getUser(socket.id);
     const answer = getAnswer(user.room);
     const canGuess = !isCorrectGuesser(user.name, user.room) && user.name !== getJudge(user.room);

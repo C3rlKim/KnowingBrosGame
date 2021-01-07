@@ -42,7 +42,7 @@ const Chat = () => {
       return <p style={{color: "lightgreen"}} key={idx}>{msgObj.guesser} guessed the right answer!</p>
 
     if (msgObj.isCensored)
-      return <p style={{color: "gray"}} key={idx}>Illegal action: {msgObj.userName} attempted to reveal the right answer.</p>
+      return <p style={{color: "lightsteelblue"}} key={idx}>Illegal action: {msgObj.userName} attempted to reveal the right answer.</p>
 
     if (msgObj.hasLeftRoom)
       return <p style={{color: "black"}} key={idx}>{msgObj.userName} has left.</p>

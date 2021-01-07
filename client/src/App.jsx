@@ -5,8 +5,6 @@ import Landing from './components/Landing';
 import CreateJoin from './components/CreateJoin';
 import WaitRoom from './components/WaitRoom';
 import Room from './components/GameRoom';
-import Chat from './components/Chat';
-//TESTING\
 import Guess from './components/Guess';
 
 const App = () => (
