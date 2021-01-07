@@ -18,8 +18,6 @@ const Choose = (props) => {
       try {
         const response = await fetch(
           "https://api.soundcloud.com/playlists/1152826654?client_id=d02c42795f3bcac39f84eee0ae384b00"
-          //keep playlist short for now
-          //"https://api.soundcloud.com/playlists/405726?client_id=d02c42795f3bcac39f84eee0ae384b00"
         );
 
         const json = await response.json();
@@ -48,8 +46,6 @@ const Choose = (props) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // disable user submitting placeholder or empty string
-    console.log(trackNum);
-    console.log(answer);
     socket.emit("songSelected", trackNum, answer, () => {
       handlePageChange("hint");
     });

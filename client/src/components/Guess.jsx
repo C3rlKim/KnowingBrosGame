@@ -10,20 +10,23 @@ const Guess = (props) => {
   let { handlePageChange } = props;
   const [track, setTrack] = useState(5);
   const [playing, setPlaying] = useState(false);
-  const [whichPlaying, setWhichPlaying] = useState(0); //number of seconds of the snippet hint
+  const [isPlaying, setIsPlaying] = useState(false); //number of seconds of the snippet hint
+  const [seconds, setSeconds] = useState(0);
+  const [key, setKey] = useState(-1);
+  const [preparationMsg, setPreparationMsg] = useState("");
+  const [countdown, setCountdown] = useState(-1);
   const playerRef = useRef(null);
-  const [key, setKey] = useState(0);
+  const timerRef = useRef(null);
 
   useEffect(() => {
     socket.emit("getSelectedSong");
 
     socket.on("selectedSong", (track) => {
-      console.log("changed track",  track);
       setTrack(track);
     });;
 
     socket.on("playSnippet", (seconds) => {
-      setWhichPlaying(seconds);
+      setSeconds(seconds);
     });
 
     //move to results page once 1-everyone guesses right, 2-timer runs out
@@ -32,29 +35,46 @@ const Guess = (props) => {
     // })
   }, []);
 
+  useEffect(() => {
+    if (seconds) setCountdown(5);
+  }, [seconds]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if ((countdown >= 0)) {
+        setPreparationMsg("Prepare to listen... Playing " + seconds + "-second hint in " + countdown);
+        if (countdown > 0) setCountdown(countdown - 1);
+        else if (countdown === 0) setIsPlaying(true);
+      }
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [countdown]);
+
   //update 'playing' last so it's not overidden by async updates to other states
   useEffect(() => {
-    if (whichPlaying === 0) {
-      if (playing) setPlaying(false);
+    if (!isPlaying) {
+      if (playing) {
+        setPlaying(false);
+        setPreparationMsg("");
+      }
     }
     else {
       playerRef.current.seekTo(start);
       if (!playing) setPlaying(true);
     }
-  }, [whichPlaying]);
+  }, [isPlaying]);
 
   // Latency issues (progressInterval is at 500ms right now)
   const handleProgress = (progress) => {
     console.log("progress", progress);
-    if ((progress.playedSeconds - start) >= whichPlaying) {
+    if ((progress.playedSeconds - start) >= seconds) {
       console.log("hit");
-      setWhichPlaying(0);
+      setIsPlaying(false);
     }
   }
 
   //force react player rerender with new start_track when track changes
   useEffect(() => {
-    console.log("useeffect key", key);
     setKey(key+1);
   }, [track]);
 
@@ -63,6 +83,7 @@ const Guess = (props) => {
       <h1>guess the song</h1>
       <p>send your guesses in the chat</p>
 
+      <p style={{color: "orange"}}>{preparationMsg}</p>
       <ReactPlayer
         key={key}
         hidden
