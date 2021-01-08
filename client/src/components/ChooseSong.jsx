@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 
 import Form from 'react-bootstrap/Form';
 import Alert from 'react-bootstrap/Alert'
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import ReactPlayer from 'react-player/soundcloud';
 import MainButton from './MainButton';
 
@@ -66,10 +68,9 @@ const Choose = (props) => {
   return (
     <div>
       <h1>you are the judge for this round!</h1>
-      <h1>choose a song</h1>
+      <h2>choose a song</h2>
 
       <Form onSubmit={handleSubmit}>
-        <MainButton type="submit">submit</MainButton>
 
         <Form.Label className="formLabel">
           SONG SELECTION
@@ -81,28 +82,31 @@ const Choose = (props) => {
         <Form.Label className="formLabel">
           ANSWER TO GUESS
         </Form.Label>
-        <Form.Control className="formInput" type="text" value={answer} onChange={handleAnswerChange} placeholder="explicit answer here ..."/>
+        <Form.Control type="text" value={answer} onChange={handleAnswerChange} placeholder="explicit answer here ..." style={{marginBottom: "0.5rem"}}/>
+
+        <MainButton type="submit">submit</MainButton>
 
         {
           errorMsg &&
-          <Alert variant="danger" onClose={handleAlertClose} dismissible>{errorMsg}</Alert>
+          <Alert variant="danger" onClose={handleAlertClose} dismissible style={{marginTop: "0.5rem"}}>{errorMsg}</Alert>
         }
 
         <Form.Label className="formLabel">
           SONG PLAYER
         </Form.Label>
-
-        <ReactPlayer
-          url="https://soundcloud.com/kaetly-rojas/sets/kpop"
-          width='100%'
-          config={{
-            soundcloud: {
-              options: {
-                visual: false
+        <div style={{overflow: "scroll", height:'300px'}}>
+          <ReactPlayer
+            url="https://soundcloud.com/kaetly-rojas/sets/kpop"
+            width='100%'
+            config={{
+              soundcloud: {
+                options: {
+                  visual: false
+                }
               }
-            }
-          }}
-        />
+            }}
+          />
+        </div>
       </Form>
     </div>
   );

@@ -68,7 +68,7 @@ const GameRoom = () => {
 
   const component = (
     <Row className="roomRow align-items-center">
-      <Col xs={4} sm={3} xl={2} className="roomCol">
+      <Col xs={3} xl={2} className="roomCol">
         {timer}
         <div hidden={!showPlayerPanel} className="panel playerPanel">
           <svg onClick={handlePlayerPanelClick} viewBox="0 0 35 35" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
@@ -89,7 +89,7 @@ const GameRoom = () => {
         <div hidden={showPlayerPanel} className="panel playerPanel closed" onClick={handlePlayerPanelClick}></div>
       </Col>
 
-      <Col xs={4} sm={6} xl={8} >
+      <Col xs={6} xl={8} >
         {
               (page==="choose" && <ChooseSong handlePageChange={handlePageChange}/>)
           ||  (page==="wait" && <Wait handlePageChange={handlePageChange} />)
@@ -99,7 +99,7 @@ const GameRoom = () => {
         }
       </Col>
 
-      <Col xs={4} sm={3} xl={2} className="roomCol">
+      <Col xs={3} xl={2} className="roomCol">
         <div hidden={!showChatPanel} className="panel chatPanel">
             <svg onClick={handleChatPanelClick} viewBox="0 0 35 35" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
               <g>
