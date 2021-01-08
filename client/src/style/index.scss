@@ -22,8 +22,12 @@ html {
       .formLabel {
         display: block;
         text-align: left;
-        margin-top: 10px;
+        margin-top: 1rem;
         margin-bottom: 0;
+      }
+
+      .formInput {
+        margin-bottom: 1rem;
       }
 
       .btn-main {

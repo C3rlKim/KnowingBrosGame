@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import Form from 'react-bootstrap/Form';
+import Alert from 'react-bootstrap/Alert'
 import ReactPlayer from 'react-player/soundcloud';
 import MainButton from './MainButton';
 
@@ -9,9 +10,10 @@ import socket from '../socket';
 const Choose = (props) => {
   const { handlePageChange } = props;
   const [titles, setTitles] = useState(null);
-  const [value, setValue] = useState(0);
-  const [trackNum, setTrackNum] = useState();
+  const [value, setValue] = useState("choose a song");
+  const [trackNum, setTrackNum] = useState(0);
   const [answer, setAnswer] = useState("");
+  const [errorMsg, setErrorMsg] = useState(null);
 
   useEffect(() => {
     async function getPlaylist() {
@@ -21,12 +23,14 @@ const Choose = (props) => {
         );
 
         const json = await response.json();
+        json.tracks.unshift({title: "choose a song"});
         setTitles(json.tracks.map((track,idx) => {
           return (
-            <option key={idx}>{track.title}</option>
+            <option disabled={idx === 0 ? true : false} key={idx}>{track.title}</option>
           );
         }));
-      } catch (error) {
+      }
+      catch (error) {
         console.log("error: ", error);
       }
     }
@@ -46,9 +50,17 @@ const Choose = (props) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // disable user submitting placeholder or empty string
-    socket.emit("songSelected", trackNum, answer, () => {
-      handlePageChange("hint");
-    });
+    if (trackNum === 0) setErrorMsg("Invalid song choice");
+    else if (answer.length === 0) setErrorMsg("Fill in an answer");
+    else {
+      socket.emit("songSelected", trackNum-1, answer, () => {
+        handlePageChange("hint");
+      });
+    }
+  }
+
+  const handleAlertClose = () => {
+    setErrorMsg(null);
   }
 
   return (
@@ -69,11 +81,17 @@ const Choose = (props) => {
         <Form.Label className="formLabel">
           ANSWER TO GUESS
         </Form.Label>
-        <Form.Control type="text" value={answer} onChange={handleAnswerChange} placeholder="explicit answer here ..."/>
+        <Form.Control className="formInput" type="text" value={answer} onChange={handleAnswerChange} placeholder="explicit answer here ..."/>
+
+        {
+          errorMsg &&
+          <Alert variant="danger" onClose={handleAlertClose} dismissible>{errorMsg}</Alert>
+        }
 
         <Form.Label className="formLabel">
           SONG PLAYER
         </Form.Label>
+
         <ReactPlayer
           url="https://soundcloud.com/kaetly-rojas/sets/kpop"
           width='100%'
