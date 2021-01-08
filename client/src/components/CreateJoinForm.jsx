@@ -5,9 +5,21 @@ import { Link } from 'react-router-dom';
 
 import AccentButton from './AccentButton';
 
-const CreateJoinForm = ({ name, room, option, handleChangeName, handleChangeRoom, handleSubmit, errorMess, setErrorMess })=> {
+const CreateJoinForm = ({ name, room, option, handleChangeName, handleChangeRoom, handleSubmit, errorMess, setErrorMess, setRenderedComp })=> {
   const handleAlertClose = () => {
     setErrorMess("");
+  }
+
+  // When user is in create room but wants to go to join room (vice versa)
+  const handleLink = (e) => {
+    e.preventDefault();
+
+    if(option==="create") {
+      setRenderedComp("join")
+    }
+    else {
+      setRenderedComp("create")
+    }
   }
 
   return (
@@ -33,9 +45,9 @@ const CreateJoinForm = ({ name, room, option, handleChangeName, handleChangeRoom
           <Alert variant="danger" onClose={handleAlertClose} dismissible>{errorMess}</Alert>
         }
       </Form>
-      <Link className="roomLink" to={(option==="create") ? "/join": "/create"}>
+      <p className="roomLink" onClick={handleLink}>
         actually, I want to {(option==="create") ? "join": "create"} a room
-      </Link>
+      </p>
     </div>
   )
 }

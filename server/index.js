@@ -71,11 +71,10 @@ io.on("connect", socket => {
     io.in(room).emit("playersInRoom",getUsersInRoom(room));
   });
 
-  // Does not end socket connection, just exits from room
+  // Does not end socket connection, just cleans up user related data
   socket.on("leaveGame", (callback) => {
     const user = getUser(socket.id);
     removeUser(user.name,user.room,socket.id);
-    // async issue
     socket.leave(user.room);
     callback();
     io.in(user.room).emit("playersInRoom",getUsersInRoom(user.room));
@@ -192,13 +191,15 @@ io.on("connect", socket => {
     msgConfirm();
   });
 
-  // Removes user from server data store and emits updated list of players in room
-  // socket io automatically handles its own leaving room functionality
+  // Includes page refresh
+  // socket io disconnect event auto handles its own leave room functionality
   socket.on("disconnect", () => {
     console.log(`${socket.id} disconnected`);
     const user = getUser(socket.id);
+    // Skip if user disconnects without creating user name data
     if(user) {
       removeUser(user.name,user.room,socket.id);
+      console.log("user data cleaned");
       socket.to(user.room).emit("serverMessage", { userName: user.name, hasLeftRoom: true });
       socket.to(user.room).emit("playersInRoom", getUsersInRoom(user.room));
     }
