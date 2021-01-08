@@ -1,7 +1,6 @@
 import React from 'react';
 import Form from 'react-bootstrap/Form';
 import Alert from 'react-bootstrap/Alert';
-import { Link } from 'react-router-dom';
 
 import AccentButton from './AccentButton';
 
