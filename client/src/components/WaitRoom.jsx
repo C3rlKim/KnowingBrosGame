@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -12,10 +11,8 @@ import '../style/CreateJoinWait.scss';
 
 import socket from '../socket';
 
-const WaitRoom = () => {
-  const history = useHistory();
+const WaitRoom = ({ setRenderedComp }) => {
   const [spin, setSpin] = useState(false);
-
   const [players, setPlayers] = useState([]);
   const [errorMess, setErrorMess] = useState("");
 
@@ -23,9 +20,13 @@ const WaitRoom = () => {
     setSpin(true);
   }
 
+  const handleAlertClose = () => {
+    setErrorMess("");
+  }
+
   const handleLeave = () => {
     socket.emit("leaveGame",() => {
-      history.push("/");
+      setRenderedComp("landing");
     });
   }
 
@@ -37,10 +38,6 @@ const WaitRoom = () => {
     socket.emit("startClicked");
   }
 
-  const handleAlertClose = () => {
-    setErrorMess("");
-  }
-
   // Even though the effect is only called once
   // the socket will be continue to listen
   useEffect( () => {
@@ -50,7 +47,7 @@ const WaitRoom = () => {
     socket.emit("getPlayersInRoom");
 
     socket.on("startGame", () => {
-      history.push("/gameroom");
+      setRenderedComp("gameroom");
     });
   }, []);
 

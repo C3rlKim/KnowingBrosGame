@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
 
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
@@ -10,11 +9,8 @@ import '../style/CreateJoinWait.scss';
 
 import socket from '../socket';
 
-const CreateJoin = (props) => {
-  const { option } = props;
-  const history = useHistory();
+const CreateJoin = ({ option, setRenderedComp }) => {
   const [spin, setSpin] = useState(false);
-
   const [room, setRoom] = useState("");
   const [name, setName] = useState("");
   const [errorMess, setErrorMess] = useState("");
@@ -45,10 +41,10 @@ const CreateJoin = (props) => {
         setErrorMess(error);
       }
       else if(status==="waitroom") {
-        history.push("/waitroom");
+        setRenderedComp("waitroom");
       }
       else if (status==="gameroom") {
-        history.push("/gameroom");
+        setRenderedComp("gameroom");
       }
     });
   }
@@ -99,6 +95,7 @@ const CreateJoin = (props) => {
             handleSubmit={handleSubmit}
             errorMess={errorMess}
             setErrorMess={setErrorMess}
+            setRenderedComp={setRenderedComp}
           />
         </Col>
       </Row>

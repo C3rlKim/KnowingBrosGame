@@ -6,12 +6,12 @@ import Col from 'react-bootstrap/Col';
 import Spinner from 'react-bootstrap/Spinner';
 import ScrollToBottom from 'react-scroll-to-bottom';
 
-import Results from './Results';
+import Chat from './Chat';
 import ChooseSong from './ChooseSong';
-import Guess from './Guess';
 import Wait from './Wait';
 import HintOptions from './HintOptions';
-import Chat from './Chat';
+import Guess from './Guess';
+import Results from './Results';
 
 import '../style/GameRoom.scss';
 
@@ -65,7 +65,7 @@ const GameRoom = () => {
       <Spinner animation="grow"/>
     </div>
   )
-  
+
   const component = (
     <Row className="roomRow align-items-center">
       <Col xs={4} sm={3} xl={2} className="roomCol">
