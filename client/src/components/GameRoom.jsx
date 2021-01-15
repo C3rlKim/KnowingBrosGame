@@ -13,18 +13,20 @@ import HintOptions from './HintOptions';
 import Guess from './Guess';
 import Results from './Results';
 
+
 import '../style/GameRoom.scss';
 
 import socket from '../socket'
 
 
-const GameRoom = () => {
+const GameRoom = ({ setRenderedComp }) => {
   const [players, setPlayers] = useState([]);
   const [page, setPage] = useState("");
   const [showPlayerPanel, setShowPlayerPanel] = useState(true);
   const [showChatPanel, setShowChatPanel] = useState(true);
-  const [timer, setTimer] = useState();
+  const [timer, setTimer] = useState(null);
   const [renderReady, setRenderReady] = useState(false);
+  const [resultsPageData, setResultsPageData] = useState();
 
   const handlePageChange = (newpage) => {
     setPage(newpage);
@@ -46,14 +48,53 @@ const GameRoom = () => {
     });
     socket.emit("getPlayersInRoom");
 
+    socket.emit("getPage",(page, pageData) => {
+      if(page === "turnResults" || page === "gameResults") {
+        setResultsPageData(pageData);
+      }
+      else {
+        setPage(page);
+      }
+    });
+
     socket.on("timer", (serverTime) => {
       setTimer(serverTime);
     });
 
-    socket.emit("getPage",(page) => {
-      setPage(page);
+    socket.on("toTurnResults", (resultsPageData) => {
+      setTimer(null);
+      setResultsPageData(resultsPageData);
     });
+
+    // how to combine or distinuish turn and game results
+    socket.on("toGameResults", (resultsPageData) => {
+      setTimer(null);
+      setResultsPageData(resultsPageData);
+    })
+
+    socket.on("toChoose", () => {
+      setPage("choose");
+    });
+
+    socket.on("toWait", () => {
+      setPage("wait");
+    })
+
+    socket.on("toWaitRoom", () => {
+      setRenderedComp("waitroom");
+    })
   }, [])
+
+  useEffect(() => {
+    if (resultsPageData){
+      if (resultsPageData.option === "turn") {
+        setPage("turnResults");
+      }
+      else if (resultsPageData.option === "game"){
+        setPage("gameResults");
+      }
+    }
+  }, [resultsPageData])
 
   useEffect(() => {
     // skips the first render
@@ -93,9 +134,10 @@ const GameRoom = () => {
         {
               (page==="choose" && <ChooseSong handlePageChange={handlePageChange}/>)
           ||  (page==="wait" && <Wait handlePageChange={handlePageChange} />)
-          ||  (page==="hint" && <HintOptions handlePageChange={handlePageChange} />)
-          ||  (page==="guess" && <Guess handlePageChange={handlePageChange} />)
-          ||  (page==="results" && <Results handlePageChange={handlePageChange} />)
+          ||  (page==="hint" && <HintOptions />)
+          ||  (page==="guess" && <Guess />)
+          ||  (page==="turnResults" && <Results option={resultsPageData.option} usersPoints={resultsPageData.usersPoints}/>)
+          ||  (page==="gameResults" && <Results option={resultsPageData.option} usersPoints={resultsPageData.usersPoints}/>)
         }
       </Col>
 

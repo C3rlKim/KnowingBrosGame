@@ -12,17 +12,19 @@ const PORT = process.env.PORT || 5000;
 const {
   addUser, removeUser,
   roomExists, nameIsTaken,
-  getUsersInRoom, getUser,
-  addToInGame,roomIsInGame,
-  initJudge, getJudge, updateJudge,
-  initRound,
-  getTrackNum, getAnswer,
-  updateTrackNum, updateAnswer,
-  containsMatch, isMatch,
+  getUsersInRoom, getNumOfUsersInRoom, getUser,
+  addToInGame, roomIsInGame, removeFromInGame,
+  initJudge, getJudgePoolSize, getJudge, updateJudge,
+  getTrackNum, getAnswer, updateTrackNum, updateAnswer,
   initTime, getTime, updateTime,
   initGameStatus, getGameStatus, updateGameStatus,
-  initCorrectGuessers, addCorrectGuesser, isCorrectGuesser, updatePoints, getPoints
+  initCorrectGuessers, addCorrectGuesser, isCorrectGuesser, getNumOfCorrectGuessers, clearCorrectGuessers,
+  initPoints, updatePoints, getPoints, getSortedUsersPoints,
+  containsMatch, isMatch,
+  getIdsInRoom
 } = require('./roomAndUser.js');
+
+const { initRound, getNumOfRounds, getCurrentRound, updateCurrentRound } = require('./round.js');
 
 io.on("connect", socket => {
   console.log(`${socket.id} connected`);
@@ -84,11 +86,13 @@ io.on("connect", socket => {
   socket.on("startClicked", () => {
     const user = getUser(socket.id)
     // In case more than one user press start game
+    // can change this after creating host feature
     if(roomIsInGame(user.room)){
       return;
     }
 
     addToInGame(user.room);
+    initPoints(user.room);
     initJudge(user.room);
     initRound(user.room);
     initGameStatus(user.room);
@@ -101,7 +105,6 @@ io.on("connect", socket => {
   // in terms of game status and user role
   socket.on("getPage", (callback) => {
     const user = getUser(socket.id);
-
     const gameStatus = getGameStatus(user.room);
     let userIsJudge;
 
@@ -114,15 +117,25 @@ io.on("connect", socket => {
       console.log(`${user.name} is the guesser`);
     }
 
-    if (gameStatus === "songSelection") {
-      userIsJudge ? callback("choose") : callback("wait")
+    let page;
+    let pageData;
+
+    if (gameStatus === "chooseWait") {
+      userIsJudge ? page = "choose" : page = "wait";
     }
-    else if (gameStatus === "guessSong") {
-      userIsJudge ? callback("hint") : callback("guess")
+    else if (gameStatus === "hintGuess") {
+      userIsJudge ? page = "hint" : page = "guess";
     }
-    else if (gameStatus === "displayResults") {
-      callback("results");
+    else if (gameStatus === "turnResults") {
+      page = "turnResults";
+      pageData = { option: "turn", usersPoints: getSortedUsersPoints(user.room) };
     }
+    else if (gameStatus === "gameResults") {
+      page = "gameResults";
+      pageData = { option: "game", usersPoints: getSortedUsersPoints(user.room) };
+    }
+
+    callback(page, { pageData });
   });
 
   // Stores the song selected and advance UI
@@ -132,21 +145,66 @@ io.on("connect", socket => {
     updateAnswer(user.room, answer);
     console.log(`The answer for ${user.room} is ${getAnswer(user.room)}`);
 
-    updateGameStatus(user.room, "guessSong");
+    updateGameStatus(user.room, "hintGuess");
     socket.to(user.room).emit("startGuessing");
     judgeToHintUI();
 
-    // Timer
     initTime(user.room);
     const timeInterval =  setInterval(()=> {
-      if(getTime(user.room) === 0){
+      // If timer is up or every guesser gets the answer
+      if(getTime(user.room) === 0 || getNumOfUsersInRoom(user.room) -1 === getNumOfCorrectGuessers(user.room)) {
         clearInterval(timeInterval);
-        // add logic of end of round
+        if(getJudgePoolSize(user.room) === 0) {
+          // Next round
+          initJudge(user.room);
+          updateCurrentRound(user.room);
+          if(getCurrentRound(user.room) > getNumOfRounds(user.room)) {
+            // Game ended: Final Result and then to Wait Room
+            updateGameStatus("gameResults")
+            io.in(user.room).emit("toGameResults", { option: "game", usersPoints: getSortedUsersPoints(user.room) });
+
+            setTimeout(() => {
+              removeFromInGame(user.room);
+              io.in(user.room).emit("toWaitRoom");
+            }, 4000)
+            return;
+          }
+        }
+        else {
+          // Next turn
+          updateJudge(user.room);
+          console.log(`${getJudge(user.room)} is the new judge`);
+        }
+
+        clearCorrectGuessers(user.room);
+        updateGameStatus(user.room,"turnResults");
+        io.in(user.room).emit("toTurnResults", { option: "turn", usersPoints: getSortedUsersPoints(user.room) });
+
+        //Round change ui talk to kelley
+
+        setTimeout(() => {
+          updateGameStatus(user.room, "chooseWait");
+          for (const socketId of getIdsInRoom(user.room)) {
+            if(getUser(socketId).name === getJudge(user.room)) {
+              io.to(socketId).emit("toChoose");
+            }
+            else{
+              io.to(socketId).emit("toWait");
+            }
+          }
+        }, 4000);
       }
-      updateTime(user.room);
-      io.in(user.room).emit("timer", getTime(user.room));
+      else {
+        updateTime(user.room);
+        io.in(user.room).emit("timer", getTime(user.room));
+      }
     }, 1000)
   });
+
+  socket.on("getChooseWaitPage", (callback) => {
+    const user = getUser(socket.id);
+    callback(user.name === getJudge(user.room));
+  })
 
   socket.on("getSelectedSong", () => {
     const user = getUser(socket.id);
@@ -183,7 +241,6 @@ io.on("connect", socket => {
       }
       else io.in(user.room).emit("serverMessage", { message: input, userName: user.name });
     }
-
     else {
       io.in(user.room).emit("serverMessage", { message: mediaBlobUrl, userName: user.name, isAudio: true });
     }

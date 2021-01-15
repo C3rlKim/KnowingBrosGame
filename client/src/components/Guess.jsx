@@ -7,7 +7,6 @@ import socket from '../socket';
 const start = 30;
 
 const Guess = (props) => {
-  let { handlePageChange } = props;
   const [track, setTrack] = useState(5);
   const [playing, setPlaying] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false); //number of seconds of the snippet hint
@@ -93,7 +92,7 @@ const Guess = (props) => {
         playing={playing}
         config={{
           soundcloud: {
-            options: { 
+            options: {
               start_track: track,
               visual: false
             }
