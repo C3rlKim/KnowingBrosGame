@@ -7,8 +7,8 @@ const Chat = () => {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
 
-  const sendMessage = event => {
-    event.preventDefault();
+  const sendMessage = (e) => {
+    e.preventDefault();
 
     if(input==="") {
       return;

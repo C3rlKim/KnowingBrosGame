@@ -1,17 +1,19 @@
-const _ = require("lodash");
+const Deque = require('collections/deque');
+const _ = require('lodash');
 
 const roomToUsersSet = {};
 const roomToUsersArray = {};
 const inGameRooms = new Set();
 const idToUser = {};
-const roomToJudgeIdx = {};
-const roomToRound = {};
+const roomToJudge = {};
+const roomToJudgePool = {};
 const roomToTrackNum = {};
 const roomToAnswer = {}
 const roomToTime = {};
 const roomToGameStatus = {};
 const roomToUserToPoints = {};
 const roomToSetOfCorrectGuessers = {};
+const roomToIdArray = {};
 
 
 // Addition and removal of user functions
@@ -20,18 +22,23 @@ const addUser = (name, room, id) => {
     roomToUsersSet[room] = new Set();
     roomToUsersArray[room] = [];
     roomToUserToPoints[room] = {};
+    roomToIdArray[room] = [];
   }
   roomToUsersSet[room].add(name);
   roomToUsersArray[room].push(name);
-  roomToUserToPoints[room][name] = 0;
   idToUser[id] = { name, room };
+  roomToIdArray[room].push(id);
 }
 const removeUser = (name, room, id) => {
   roomToUsersSet[room].delete(name);
-  const nameIdx = roomToUsersArray[room].indexOf(name);
-  roomToUsersArray[room].splice(nameIdx,1);
-  delete roomToUserToPoints[room][name];
+  roomToUsersArray[room].splice(roomToUsersArray[room].indexOf(name), 1);
   delete idToUser[id];
+  roomToIdArray[room].splice(roomToIdArray[room].indexOf(id), 1);
+
+  if(roomIsInGame(room)){
+    delete roomToUserToPoints[room][name];
+    roomToSetOfCorrectGuessers[room].delete(name);
+  }
 }
 
 // Validation functions
@@ -40,30 +47,31 @@ const nameIsTaken = (name, room) => roomToUsersSet[room].has(name)
 
 // get user(s) functions
 const getUsersInRoom = (room) => roomToUsersArray[room]
+const getNumOfUsersInRoom = (room) => roomToUsersArray[room].length
 const getUser = (id) => idToUser[id]
 
 // In game Check functions
 const addToInGame = (room) => inGameRooms.add(room)
 const roomIsInGame = (room) => inGameRooms.has(room)
+const removeFromInGame = (room) => inGameRooms.delete(room)
 
 // Judge functions
 const initJudge = (room) => {
-  roomToUsersArray[room] = _.shuffle(roomToUsersArray[room]);
-  roomToJudgeIdx[room] = 0;
-}
-const getJudge = (room) => {
-  const judgeIdx = roomToJudgeIdx[room];
-  return roomToUsersArray[room][judgeIdx];
-}
-const updateJudge = (room) => {
-  const judgeIdx = roomToJudgeIdx[room];
-  judgeIdx = (judgeIdx + 1) % roomToUsersArray[room].length;
-}
+  const shuffledUsers = _.shuffle(roomToUsersArray[room]);
 
-// Round functions
-const initRound = (room) => {
-  // For now make the round length the number of users in room
-  roomToRound[room] = getUsersInRoom(room).length
+  if(!roomToJudgePool[room]) roomToJudgePool[room] = new Deque();
+  for(const user of shuffledUsers){
+    // adding user to the front of the deque
+    roomToJudgePool[room].unshift(user);
+  }
+  const newJudge = roomToJudgePool[room].pop();
+  roomToJudge[room] = newJudge;
+}
+const getJudgePoolSize = (room) => roomToJudgePool[room].length
+const getJudge = (room) => roomToJudge[room]
+const updateJudge = (room) => {
+  const newJudge = roomToJudgePool[room].pop();
+  roomToJudge[room] = newJudge;
 }
 
 // TrackNum and Answer functions
@@ -73,24 +81,40 @@ const updateTrackNum = (room, trackNum) => roomToTrackNum[room] = trackNum
 //replace dashes, remove extra spaces & non-alahanumeric characters
 const updateAnswer = (room, answer) => roomToAnswer[room] = answer.replace(/-/g, ' ').replace(/\s+/g,' ').replace(/[^0-9a-z ]/gi, '').trim().toLowerCase();
 
-
 // Time functions
 const initTime = (room) => roomToTime[room] = 60
 const getTime = (room) => roomToTime[room]
 const updateTime = (room) => roomToTime[room] -= 1
 
 // Game status functions
-const initGameStatus = (room) => roomToGameStatus[room] = "songSelection"
+const initGameStatus = (room) => roomToGameStatus[room] = "chooseWait"
 const getGameStatus = (room) => roomToGameStatus[room]
 const updateGameStatus = (room, status) => roomToGameStatus[room] = status
 
-// Point functions
+// Correct Guesser functions
 const initCorrectGuessers = (room) => roomToSetOfCorrectGuessers[room] = new Set()
 const addCorrectGuesser = (name, room) => roomToSetOfCorrectGuessers[room].add(name)
 const isCorrectGuesser = (name, room) => roomToSetOfCorrectGuessers[room].has(name)
+const getNumOfCorrectGuessers = (room) => roomToSetOfCorrectGuessers[room].size
+const clearCorrectGuessers = (room) => roomToSetOfCorrectGuessers[room].clear()
+
+// Points functions
+const initPoints = (room) => {
+  for (const user of roomToUsersArray[room]){
+    roomToUserToPoints[room][user] = 0;
+  }
+}
 const updatePoints = (name, room, points) => roomToUserToPoints[room][name] += points
 const getPoints = (name, room) => roomToUserToPoints[room][name]
+const getSortedUsersPoints = (room) => {
+  let userPointsArray = [];
+  for (const user of roomToUsersArray[room]){
+    userPointsArray.push({ userName: user, points: roomToUserToPoints[room][user] });
+  }
+  return _.sortBy(userPointsArray, (userPointsObj) => -userPointsObj.points);
+}
 
+// Match functions
 const containsMatch = (input, answer) => {
   let answerArray = answer.split(" ");
   for (word of answerArray) {
@@ -98,7 +122,6 @@ const containsMatch = (input, answer) => {
   }
   return true;
 }
-
 const isMatch = (input, answer) => {
   let answerArray = answer.split(" ");
 
@@ -130,17 +153,20 @@ const isMatch = (input, answer) => {
   return extra + answerMap.size;//extra input + missing words from answer
 }
 
+// socket IDs functions
+const getIdsInRoom = (room) => roomToIdArray[room];
+
 module.exports = {
   addUser, removeUser,
   roomExists, nameIsTaken,
-  getUsersInRoom, getUser,
-  addToInGame,roomIsInGame,
-  initJudge, getJudge, updateJudge,
-  initRound,
-  getTrackNum, getAnswer,
-  updateTrackNum, updateAnswer,
-  containsMatch, isMatch,
+  getUsersInRoom, getNumOfUsersInRoom, getUser,
+  addToInGame, roomIsInGame, removeFromInGame,
+  initJudge, getJudgePoolSize, getJudge, updateJudge,
+  getTrackNum, getAnswer, updateTrackNum, updateAnswer,
   initTime, getTime, updateTime,
   initGameStatus, getGameStatus, updateGameStatus,
-  initCorrectGuessers, addCorrectGuesser, isCorrectGuesser, updatePoints, getPoints
+  initCorrectGuessers, addCorrectGuesser, isCorrectGuesser, getNumOfCorrectGuessers, clearCorrectGuessers,
+  initPoints, updatePoints, getPoints, getSortedUsersPoints,
+  containsMatch, isMatch,
+  getIdsInRoom
 };
